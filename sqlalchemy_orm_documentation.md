@@ -211,7 +211,7 @@ print(movie.user.name)
 ```
 ┌───────────────┐          ┌──────────────────────────────┐
 │    USER TABLE │          │         MOVIE TABLE          │
-│ id | name     │◄────────┤ user_id | name               │
+│ id | name     │◄─────────┤ user_id | name               │
 └───────────────┘          └──────────────────────────────┘
 user.movies  → list of Movie objects
 movie.user   → single User object
@@ -219,4 +219,211 @@ movie.user   → single User object
 
 ---
 Both documents include **real table data**, **code block comparisons**, and **diagrams** to illustrate ORM concepts versus raw SQL joins.
+
+# SQLAlchemy Session Manual
+
+## Overview
+The `Session` object in SQLAlchemy manages all interactions between Python objects and the database. It tracks objects, handles commits, rollbacks, and maintains the connection.
+
+In Flask-SQLAlchemy, `db.session` is a preconfigured session instance.
+
+---
+
+## 1️⃣ add(instance)
+**Purpose:** Add a single object to the session (pending insertion).
+
+```python
+alice = User(name="Alice")
+db.session.add(alice)
+db.session.commit()
+```
+
+---
+
+## 2️⃣ add_all([instances])
+**Purpose:** Add multiple objects at once.
+
+```python
+bob = User(name="Bob")
+carol = User(name="Carol")
+db.session.add_all([bob, carol])
+db.session.commit()
+```
+
+---
+
+## 3️⃣ commit()
+**Purpose:** Persist all pending changes to the database.
+
+```python
+new_movie = Movie(name="Inception", year=2010, user_id=1)
+db.session.add(new_movie)
+db.session.commit()
+```
+
+---
+
+## 4️⃣ rollback()
+**Purpose:** Undo all uncommitted changes.
+
+```python
+try:
+    new_movie = Movie(name="ErrorMovie", year=2022, user_id=999)
+    db.session.add(new_movie)
+    db.session.commit()
+except:
+    db.session.rollback()
+```
+
+---
+
+## 5️⃣ delete(instance)
+**Purpose:** Mark an object for deletion.
+
+```python
+movie = Movie.query.get(1)
+db.session.delete(movie)
+db.session.commit()
+```
+
+---
+
+## 6️⃣ query()
+**Purpose:** Start ORM queries.
+
+```python
+users = db.session.query(User).all()
+movies = db.session.query(Movie).filter_by(user_id=1).all()
+```
+
+---
+
+## 7️⃣ flush()
+**Purpose:** Push changes to the DB without committing.
+
+```python
+new_user = User(name="Dave")
+db.session.add(new_user)
+db.session.flush()
+print(new_user.id)
+db.session.commit()
+```
+
+---
+
+## 8️⃣ expire(instance) / expire_all()
+**Purpose:** Mark object attributes as expired for reload on next access.
+
+```python
+alice = User.query.get(1)
+db.session.expire(alice)
+print(alice.name)
+```
+
+---
+
+## 9️⃣ refresh(instance)
+**Purpose:** Reload the object immediately from the database.
+
+```python
+bob = User.query.get(2)
+db.session.refresh(bob)
+print(bob.name)
+```
+
+---
+
+## 10️⃣ close()
+**Purpose:** Close the session and release the connection.
+
+```python
+db.session.close()
+```
+
+---
+
+## 11️⃣ remove() (Flask-SQLAlchemy specific)
+**Purpose:** Remove the session from thread-local storage.
+
+```python
+db.session.remove()
+```
+
+---
+
+## 12️⃣ merge(instance)
+**Purpose:** Re-associate a detached object with the session.
+
+```python
+alice_detached = User(id=1, name="Alice Updated")
+db.session.merge(alice_detached)
+db.session.commit()
+```
+
+---
+
+## 13️⃣ bulk_save_objects(objects)
+**Purpose:** Efficiently insert/update many objects at once.
+
+```python
+movies = [
+    Movie(name="Tenet", year=2020, user_id=1),
+    Movie(name="Memento", year=2000, user_id=1)
+]
+db.session.bulk_save_objects(movies)
+db.session.commit()
+```
+
+---
+
+## Object Lifecycle & Session Diagram
+
+```
+             +------------+
+Transient    |   Python   |  (Created but not added to session)
+   obj      +------------+
+        db.session.add(obj)
+                 |
+                 v
+             +------------+
+Pending      |  Session   |  (Tracked by session, waiting for commit)
+   obj      +------------+
+        db.session.commit()
+                 |
+                 v
+             +------------+
+Persistent   |  Database  |  (Now saved in DB)
+   obj      +------------+
+        db.session.delete(obj)
+                 |
+                 v
+             +------------+
+Deleted     |  Session   |  (Marked for deletion; removed on commit)
+   obj      +------------+
+```
+
+- **Transient:** New Python object, not tracked.
+- **Pending:** Added to session with `.add()`, not yet committed.
+- **Persistent:** Saved in the database after `.commit()`.
+- **Deleted:** Marked for deletion via `.delete()`, removed on commit.
+
+---
+
+## Summary Table
+
+| Method | Purpose |
+|--------|---------|
+| `add(instance)` | Add a single object |
+| `add_all([instances])` | Add multiple objects |
+| `commit()` | Save all pending changes |
+| `rollback()` | Undo pending changes |
+| `delete(instance)` | Mark object for deletion |
+| `query()` | Start queries |
+| `flush()` | Push changes without commit |
+| `expire()` / `expire_all()` | Expire object(s) to reload later |
+| `refresh(instance)` | Reload object immediately from DB |
+| `close()` | Close session connection |
+| `remove()` | Remove session (Flask-SQLAlchemy) |
+| `merge(instance)` | Re-associate detached object |
+| `bulk_save_objects()` | Bulk insert/update objects |
 
