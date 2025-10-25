@@ -1,4 +1,5 @@
 """
+# app.py
 MovieWebApp - Flask Application Setup
 -------------------------------------
 Initializes Flask, SQLAlchemy, and DataManager
@@ -7,8 +8,13 @@ for managing movie data using ORM.
 
 from pathlib import Path
 from flask import Flask
-from data_manager import DataManager
-from models import db, Movie
+# Flexible imports: package or direct script
+try:
+    from MovieWebApp.data_manager import DataManager
+    from MovieWebApp.models import db, Movie
+except ModuleNotFoundError:
+    from data_manager import DataManager
+    from models import db, Movie
 
 
 # ------------------------
@@ -44,6 +50,13 @@ def home():
     return "Welcome to MoviWeb App!"
 
 
+@app.route('/users')
+def list_users():
+    """Route to list all users."""
+    users = data_manager.get_users()  # Fetch all users from DB
+    return str(users)  # Temporary: just return as string
+
+
 # ------------------------
 # Main Entry Point
 # ------------------------
@@ -55,3 +68,5 @@ if __name__ == "__main__":
 
     # Run Flask app
     app.run(debug=True)
+
+app.run("host: 0.0.0.0", port=5001, debug=True)

@@ -1,5 +1,9 @@
 # data_manager.py
-from models import db, User, Movie
+try:
+    from MovieWebApp.models import db, User, Movie
+except ModuleNotFoundError:
+    from models import db, User, Movie
+
 
 
 class DataManager:
