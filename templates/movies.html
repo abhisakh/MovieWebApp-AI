@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }}'s Movies{% endblock %}
+
+{% block content %}
+<h2>{{ user.name }}’s Favorite Movies</h2>
+
+<!-- Movie Add Form -->
+<form action="{{ url_for('add_movie', user_id=user.id) }}" method="POST" class="add-movie-form">
+    <input type="text" name="movie_name" placeholder="Enter movie name (e.g., Inception)" required>
+    <button type="submit">Add Movie</button>
+</form>
+
+<!-- Movie List Grid -->
+<div class="movies-grid">
+    {% if movies %}
+        {% for movie in movies %}
+        <div class="movie-card">
+            <img src="{{ movie.poster_url or '/static/no-image.png' }}" alt="{{ movie.name }}" onerror="this.src='/static/no-image.png';">
+            <div class="movie-details">
+                <h3>{{ movie.name }}</h3>
+                <p><strong>Director:</strong> {{ movie.director }}</p>
+                <p><strong>Year:</strong> {{ movie.year }}</p>
+                <p>
+                    Rating:
+                    {% set stars = (movie.rating / 2) | float %} {# Scale 10 → 5 stars #}
+                    {% set stars_rounded = (stars * 4) | round / 4 %} {# Round to nearest 0.25 #}
+
+                    {% for i in range(1, 6) %}
+                        {% if stars_rounded >= i %}
+                            <span class="star">&#9733;</span> {# full star #}
+                        {% elif stars_rounded + 0.25 == i %}
+                            <span class="star-3-4">&#9733;</span> {# three-quarter star #}
+                        {% elif stars_rounded + 0.5 == i %}
+                            <span class="star-half">&#9733;</span> {# half star #}
+                        {% elif stars_rounded + 0.75 == i %}
+                            <span class="star-1-4">&#9733;</span> {# quarter star #}
+                        {% else %}
+                            <span class="star-empty">&#9733;</span> {# empty star #}
+                        {% endif %}
+                    {% endfor %}
+                    ({{ movie.rating }}/10)
+                </p>
+
+            </div>
+
+            <!-- Inline update form -->
+            <form action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" class="update-form">
+                <input type="text" name="new_title" placeholder="Rename movie..." required>
+                <button type="submit">Update</button>
+            </form>
+
+            <!-- Delete button -->
+            <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" class="delete-form">
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No movies found for {{ user.name }} yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
