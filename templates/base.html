@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}MoviWeb App{% endblock %}</title>
+    <title>{% block title %}MovieWeb App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <header>
-    <h1>MoviWeb App</h1>
+    <h1>
+        <span class="rainbow">🌈</span>
+        <span class="title-text" data-text="MovieWeb App">MovieWeb App</span>
+        <span class="rainbow-right">🌈</span>
+    </h1>
     <nav>
         <ul>
             <li><a href="{{ url_for('home') }}">Home</a></li>
@@ -17,19 +21,16 @@
 </header>
 
 <div class="wrapper">
-    <aside>
-        <h3>Users</h3>
-        <ul>
-            {% for user in users %}
-            <li>
-                <a href="{{ url_for('user_movies', user_id=user.id) }}">
-                    {{ user.name }}'s Movies
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-    </aside>
-
+        <aside>
+        <h3>🎬 Users</h3>
+            <ul>
+                {% for user in users %}
+                <li class="{% if current_user and user.id == current_user.id %}active{% endif %}">
+                    <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </aside>
     <main>
         {% block content %}
         <!-- Page-specific content goes here -->
