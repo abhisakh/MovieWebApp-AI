@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}500 Internal Server Error - MovieWeb{% endblock %}
+
+{% block content %}
+<div class="back-home-container">
+    <a href="{{ url_for('home') }}" class="back-home-btn">← Back to Home</a>
+</div>
+
+<section class="error-section">
+    <h2>💥 Something Went Wrong (500)</h2>
+    <p>We encountered an internal error. Please try again later.</p>
+    <a href="{{ url_for('home') }}" class="btn">🏠 Go Back Home</a>
+</section>
+{% endblock %}

@@ -24,8 +24,8 @@
         <nav class="nav-bar">
             <ul>
                 <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
             </ul>
         </nav>
     </div>
@@ -35,7 +35,9 @@
 </header>
 
 <div class="wrapper">
-    <aside>
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
+        {% if request.endpoint != 'home' %}
         <h3>🎬 Users</h3>
         <ul>
             {% set current_user = current_user or None %}
@@ -45,13 +47,26 @@
             </li>
             {% endfor %}
         </ul>
+        {% else %}
+        <div class="empty-sidebar"></div>
+        {% endif %}
     </aside>
 
+    <!-- Main Content -->
     <main>
-        {% block content %}
-        <!-- Page-specific content will be injected here -->
-        {% endblock %}
+        {% if request.endpoint != 'home' %}
+        <div class="back-home-container">
+            <a href="{{ url_for('home') }}" class="btn back-home-btn">🏠 ← Back to Home</a>
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
     </main>
+
+    <!-- Right Sidebar (blank black column) -->
+    <aside class="sidebar-right">
+        <div class="empty-sidebar"></div>
+    </aside>
 </div>
 
 <!-- Flash messages -->
