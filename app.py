@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from flask import (
     Flask, render_template, request, redirect, url_for, flash
 )
+import requests
 
 # -----------------------------
 # FLEXIBLE IMPORTS
@@ -62,6 +63,13 @@ app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+
+# -----------------------------
+# GitHub Cnnfiguration for the contact form
+# -----------------------------
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+REPO_OWNER = "abhisakh"
+REPO_NAME = "MovieWebApp"
 
 # -----------------------------
 # DATA MANAGER
@@ -273,14 +281,6 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact", methods=["GET", "POST"])
-def contact():
-    if request.method == "POST":
-        # Optionally, handle form submission here
-        flash("✅ Your message has been sent!", "success")
-        return redirect(url_for("contact"))
-    return render_template("contact.html")
-
 # -----------------------------
 # ERROR HANDLERS
 # -----------------------------
@@ -318,6 +318,61 @@ def inject_globals():
         "current_year": datetime.now().year,
         "users": users
     }
+
+
+# -----------------------------
+# GITHUB ROUTE
+# -----------------------------
+def save_contact_to_github(name, email, message):
+    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/issues"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json"
+    }
+    data = {
+        "title": f"Contact: {name} ({email})",
+        "body": message
+    }
+    response = requests.post(url, json=data, headers=headers)
+    return response.status_code == 201  # True if issue created
+
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        message = request.form.get("message", "").strip()
+
+        # -----------------------------
+        # VALIDATION
+        # -----------------------------
+        if not name:
+            flash("⚠️ Name cannot be empty.", "warning")
+            return redirect(url_for("home"))
+
+        if not re.match(r"^[A-Za-z\s]+$", name):
+            flash("⚠️ Name must only contain letters and spaces.", "warning")
+            return redirect(url_for("home"))
+
+        # Optional: validate email format
+        email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+        if not re.match(email_pattern, email):
+            flash("⚠️ Please enter a valid email address.", "warning")
+            return redirect(url_for("contact"))
+
+        # -----------------------------
+        # SEND TO GITHUB
+        # -----------------------------
+        if save_contact_to_github(name, email, message):
+            flash("✅ Your message has been sent!", "success")
+        else:
+            flash("❌ Failed to send message. Try again later.", "error")
+
+        return redirect(url_for("contact"))
+
+    return render_template("contact.html")
+
 
 
 # -----------------------------

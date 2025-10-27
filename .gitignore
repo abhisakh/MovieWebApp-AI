@@ -1,6 +1,7 @@
 __pycache__/
 
-
+# .gitignore
+.env
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

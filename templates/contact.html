@@ -7,7 +7,19 @@
     <h2>Contact Us 📬</h2>
     <p>Have questions, suggestions, or feedback? We'd love to hear from you!</p>
 
-    <form action="#" method="POST" class="contact-form">
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Contact form -->
+    <form action="{{ url_for('contact') }}" method="POST" class="contact-form">
         <div>
             <label for="name">Name *</label>
             <input type="text" id="name" name="name" placeholder="Your name" required>
