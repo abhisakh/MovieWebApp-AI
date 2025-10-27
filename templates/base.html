@@ -2,45 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MovieWeb App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <header>
-    <h1>
-        <span class="rainbow">🌈</span>
-        <span class="title-text" data-text="MovieWeb App">MovieWeb App</span>
-        <span class="rainbow-right">🌈</span>
-    </h1>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-        </ul>
-    </nav>
+    <!-- 🎞️ Left spinning reel -->
+    <div class="reel reel-left">🎞️</div>
+
+    <!-- 🎬 Center title + nav -->
+    <div class="header-center">
+        <h1>
+            <span class="rainbow">🌈</span>
+            <span class="title-text" data-text="MovieWeb App">MovieWeb App</span>
+            <span class="rainbow-right">🌈</span>
+        </h1>
+
+        <!-- 🧭 Navigation bar -->
+        <nav class="nav-bar">
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 🎞️ Right spinning reel -->
+    <div class="reel reel-right">🎞️</div>
 </header>
 
 <div class="wrapper">
-        <aside>
+    <aside>
         <h3>🎬 Users</h3>
-            <ul>
-                {% for user in users %}
-                <li class="{% if current_user and user.id == current_user.id %}active{% endif %}">
-                    <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        </aside>
+        <ul>
+            {% set current_user = current_user or None %}
+            {% for user in users %}
+            <li class="{% if current_user and user.id == current_user.id %}active{% endif %}">
+                <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </aside>
+
     <main>
         {% block content %}
-        <!-- Page-specific content goes here -->
+        <!-- Page-specific content will be injected here -->
         {% endblock %}
     </main>
 </div>
 
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <footer>
     &copy; {{ current_year }} MovieWeb App
 </footer>
+
+<!-- Auto-dismiss flash messages -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const flashes = document.querySelectorAll(".flash");
+
+  flashes.forEach(flash => {
+    // Show for 4 seconds, then fade out
+    setTimeout(() => {
+      flash.classList.add("fade-out");
+      // Remove from DOM after fade-out completes
+      setTimeout(() => flash.remove(), 1000);
+    }, 4000);
+  });
+});
+</script>
 
 </body>
 </html>

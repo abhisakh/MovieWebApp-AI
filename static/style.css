@@ -30,23 +30,52 @@ body::before {
 }
 
 /* =========================================================
-🎬 HEADER — Neon Cinema Title Bar
+🎬 HEADER — Neon Cinema Title Bar with Spinning Reels
 ========================================================= */
 header {
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  color: #dd1a5b;
-  padding: 1.5rem 2rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-  border-bottom: 2px solid #ffb300;
+  justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  border-bottom: 2px solid #ffb300;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
+/* 🎞️ Spinning Reels */
+.reel {
+  font-size: 3rem;
+  color: #ffeb3b;
+  text-shadow:
+    0 0 8px #ffb300,
+    0 0 15px #ff9800,
+    0 0 25px rgba(255, 153, 0, 0.8);
+  animation: reel-spin 10s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 193, 7, 0.7));
+  transform-origin: center;
+}
+
+.reel-left { animation-direction: normal; }
+.reel-right { animation-direction: reverse; }
+
+@keyframes reel-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 🎬 Center Header Content */
+.header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Title */
 header h1 {
   font-size: 3rem;
   display: flex;
@@ -55,16 +84,16 @@ header h1 {
   gap: 0.75rem;
 }
 
-header h1 .rainbow {
+header h1 .rainbow,
+header h1 .rainbow-right {
   display: inline-block;
-  text-shadow: none; /* no glow */
-  filter: none;       /* keep emoji colors intact */
+  text-shadow:
+    0 0 5px #ffeb3b,
+    0 0 10px #ff9800,
+    0 0 15px rgba(255, 153, 0, 0.8);
 }
 
-header h1 .rainbow-right{
-  display: inline-block;
-  text-shadow: none; /* no glow */
-  filter: none;
+header h1 .rainbow-right {
   transform: rotate(90deg);
 }
 
@@ -72,7 +101,6 @@ header h1 .title-text {
   background: linear-gradient(to right, #ffeb3b, #ff9800, #ff3d00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: none;
   position: relative;
 }
 
@@ -83,11 +111,12 @@ header h1 .title-text::after {
   top: 0;
   width: 100%;
   height: 100%;
-  color: #ff3d00; /* neon glow color */
-  z-index: -1;
+  color: #ff3d00;
+  z-index: 0;
   filter: blur(6px);
   opacity: 0.6;
   animation: neon-glow 5s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 @keyframes neon-glow {
@@ -96,16 +125,112 @@ header h1 .title-text::after {
   100% { filter: blur(6px); opacity: 0.6; }
 }
 
-header nav ul li a {
+/* =========================================================
+🧭 NAV BAR — Neon Links with Glowing Vertical Separators
+========================================================= */
+.nav-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+}
+
+.nav-bar ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-bar ul li {
+  position: relative;
+  padding: 0 1rem; /* horizontal spacing */
+}
+
+.nav-bar ul li + li::before {
+  /* separator between items */
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 1.2rem;
+  background: linear-gradient(to bottom, #ffeb3b, #ff6f00);
+  box-shadow: 0 0 8px #ffb300, 0 0 15px rgba(255, 153, 0, 0.6);
+}
+
+/* Nav links */
+.nav-bar ul li a {
+  text-decoration: none;
   color: #76ff03;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.6rem;
+  line-height: 1.2;
   transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
-header nav ul li a:hover {
+.nav-bar ul li a:hover {
   color: #00e5ff;
-  text-shadow: 0 0 10px #00e5ff;
+  text-shadow: 0 0 12px #00e5ff, 0 0 20px rgba(0, 229, 255, 0.5);
+}
+
+/* =========================================================
+ ⚡ FLASH MESSEGEs
+========================================================= */
+.flash-messages {
+  width: 80%;
+  max-width: 700px;
+  position: fixed;
+  top: 80px; /* just below the header */
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 999;
+}
+
+.flash {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.flash.success {
+  background: linear-gradient(90deg, #4caf50, #81c784);
+  color: #fff;
+  text-shadow: 0 0 8px #4caf50, 0 0 12px #81c784;
+  box-shadow: 0 0 10px #4caf50, 0 0 20px #81c784;
+}
+
+.flash.error {
+  background: linear-gradient(90deg, #f44336, #e57373);
+  color: #fff;
+  text-shadow: 0 0 8px #f44336, 0 0 12px #e57373;
+  box-shadow: 0 0 10px #f44336, 0 0 20px #e57373;
+}
+
+.flash.info {
+  background: linear-gradient(90deg, #2196f3, #64b5f6);
+  color: #fff;
+  text-shadow: 0 0 8px #2196f3, 0 0 12px #64b5f6;
+  box-shadow: 0 0 10px #2196f3, 0 0 20px #64b5f6;
+}
+
+.flash.fade-out {
+  animation: fade-out 1s forwards;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 
 /* =========================================================
@@ -140,7 +265,7 @@ aside::before {
 }
 
 aside h3 {
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   color: #ffca28;
   text-shadow: 0 0 8px #ff9800, 0 0 12px rgba(255, 152, 0, 0.4);
   margin-bottom: 1.5rem;
@@ -374,6 +499,82 @@ button {
 button:hover {
   background: linear-gradient(135deg, #7e57c2, #9575cd);
   transform: scale(1.05);
+}
+
+/* =========================================================
+🎬 COLLAPSIBLE ADD MOVIE FORM
+========================================================= */
+.toggle-btn {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #512da8, #673ab7);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background: linear-gradient(135deg, #7e57c2, #9575cd);
+  transform: scale(1.05);
+}
+
+/* Collapsible Form Common Styles */
+.collapsible-form,
+.collapsible-update-form {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s ease-out, opacity 0.4s ease-in;
+}
+
+/* When toggled open */
+.collapsible-form.open,
+.collapsible-update-form.open {
+  max-height: 400px; /* Adjust as needed */
+  opacity: 1;
+  margin-top: 0.5rem;
+}
+
+/* Cancel Button */
+.cancel-btn,
+.cancel-update-btn {
+  background: #333;
+  color: #ffb300;
+  border: 1px solid #ffb300;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover,
+.cancel-update-btn:hover {
+  background: #ffb300;
+  color: #000;
+}
+
+/* =========================================================
+🎬 INLINE UPDATE FORM BUTTON
+========================================================= */
+.toggle-update-btn {
+  background: #444;
+  color: #ffb300;
+  border: 1px solid #ffb300;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.toggle-update-btn:hover {
+  background: #ffb300;
+  color: #000;
 }
 
 /* =========================================================

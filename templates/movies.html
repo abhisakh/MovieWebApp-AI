@@ -3,61 +3,139 @@
 {% block title %}{{ user.name }}'s Movies{% endblock %}
 
 {% block content %}
-<h2>{{ user.name }}’s Favorite Movies</h2>
+<section class="movies-section">
+    <h2>🎬 {{ user.name }}’s Favorite Movies</h2>
 
-<!-- Movie Add Form -->
-<form action="{{ url_for('add_movie', user_id=user.id) }}" method="POST" class="add-movie-form">
-    <input type="text" name="movie_name" placeholder="Enter movie name (e.g., Inception)" required>
-    <button type="submit">Add Movie</button>
-</form>
+    <!-- 🎞 Toggle Add Movie Button -->
+    <button id="toggleAddMovie" class="toggle-btn">➕ Add Movie</button>
 
-<!-- Movie List Grid -->
-<div class="movies-grid">
-    {% if movies %}
-        {% for movie in movies %}
-        <div class="movie-card">
-            <img src="{{ movie.poster_url or '/static/no-image.png' }}" alt="{{ movie.name }}" onerror="this.src='/static/no-image.png';">
-            <div class="movie-details">
-                <h3>{{ movie.name }}</h3>
-                <p><strong>Director:</strong> {{ movie.director }}</p>
-                <p><strong>Year:</strong> {{ movie.year }}</p>
-                <p>
-                    Rating:
-                    {% set stars = (movie.rating / 2) | float %} {# Scale 10 → 5 stars #}
-                    {% set stars_rounded = (stars * 4) | round / 4 %} {# Round to nearest 0.25 #}
+    <!-- 🎬 Collapsible Add Movie Form -->
+    <div id="addMovieForm" class="collapsible-form">
+        <form method="POST" action="{{ url_for('add_movie', user_id=user.id) }}" class="add-movie-form">
+            <h3>Add a New Movie</h3>
 
-                    {% for i in range(1, 6) %}
-                        {% if stars_rounded >= i %}
-                            <span class="star">&#9733;</span> {# full star #}
-                        {% elif stars_rounded + 0.25 == i %}
-                            <span class="star-3-4">&#9733;</span> {# three-quarter star #}
-                        {% elif stars_rounded + 0.5 == i %}
-                            <span class="star-half">&#9733;</span> {# half star #}
-                        {% elif stars_rounded + 0.75 == i %}
-                            <span class="star-1-4">&#9733;</span> {# quarter star #}
-                        {% else %}
-                            <span class="star-empty">&#9733;</span> {# empty star #}
-                        {% endif %}
-                    {% endfor %}
-                    ({{ movie.rating }}/10)
-                </p>
-
+            <div>
+                <label for="movie_name">🎞 Movie Name *</label>
+                <input type="text" id="movie_name" name="movie_name" placeholder="Enter movie name" required>
             </div>
 
-            <!-- Inline update form -->
-            <form action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" class="update-form">
-                <input type="text" name="new_title" placeholder="Rename movie..." required>
-                <button type="submit">Update</button>
-            </form>
+            <div>
+                <label for="director">🎬 Director</label>
+                <input type="text" id="director" name="director" placeholder="Optional">
+            </div>
 
-            <!-- Delete button -->
-            <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" class="delete-form">
-                <button type="submit">Delete</button>
-            </form>
-        </div>
-        {% endfor %}
-    {% else %}
-        <p>No movies found for {{ user.name }} yet.</p>
-    {% endif %}
-</div>
+            <div>
+                <label for="year">📅 Year</label>
+                <input type="number" id="year" name="year" min="1888" max="{{ current_year|int + 1 }}" placeholder="e.g. 2009">
+            </div>
+
+            <div>
+                <label for="rating">⭐ Rating (0–10)</label>
+                <input type="number" id="rating" name="rating" step="0.1" min="0" max="10" placeholder="Optional">
+            </div>
+
+            <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                <button type="submit">🔍 Search & Add</button>
+                <button type="button" id="cancelAddMovie" class="cancel-btn">✖ Cancel</button>
+            </div>
+
+            <small>ℹ️ The app will automatically fetch details from OMDb.</small>
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- Movies Grid -->
+    <div class="movies-grid">
+        {% if movies %}
+            {% for movie in movies %}
+            <div class="movie-card">
+                <img src="{{ movie.poster_url or '/static/no-image.png' }}" alt="{{ movie.name }}"
+                     onerror="this.src='/static/no-image.png';">
+
+                <div class="movie-details">
+                    <h3>{{ movie.name }}</h3>
+                    <p><strong>Director:</strong> {{ movie.director }}</p>
+                    <p><strong>Year:</strong> {{ movie.year }}</p>
+                    <p>
+                        Rating:
+                        {% set stars = (movie.rating / 2) | float %}
+                        {% set stars_rounded = (stars * 4) | round / 4 %}
+                        {% for i in range(1, 6) %}
+                            {% if stars_rounded >= i %}
+                                <span class="star">&#9733;</span>
+                            {% else %}
+                                <span class="star-empty">&#9733;</span>
+                            {% endif %}
+                        {% endfor %}
+                        ({{ movie.rating }}/10)
+                    </p>
+                </div>
+
+                <!-- ✏️ Toggle Update Button -->
+                <button type="button" class="toggle-update-btn">✏️ Rename</button>
+
+                <!-- Collapsible Update Form -->
+                <div class="collapsible-update-form">
+                    <form action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}"
+                          method="POST" class="update-form">
+                        <input type="text" name="new_title" placeholder="Rename movie..." required>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <button type="submit">Update</button>
+                            <button type="button" class="cancel-update-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Delete Button -->
+                <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}"
+                      method="POST" class="delete-form">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No movies found for {{ user.name }} yet. Add a new movie above! 🎬</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- 🎬 Collapsible Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Toggle Add Movie Form
+    const toggleAddBtn = document.getElementById("toggleAddMovie");
+    const addFormContainer = document.getElementById("addMovieForm");
+    const cancelAddBtn = document.getElementById("cancelAddMovie");
+
+    toggleAddBtn?.addEventListener("click", () => {
+        addFormContainer.classList.toggle("open");
+        toggleAddBtn.textContent = addFormContainer.classList.contains("open")
+            ? "✖ Close Form"
+            : "➕ Add Movie";
+    });
+
+    cancelAddBtn?.addEventListener("click", () => {
+        addFormContainer.classList.remove("open");
+        toggleAddBtn.textContent = "➕ Add Movie";
+    });
+
+    // Toggle Update Forms
+    const updateButtons = document.querySelectorAll('.toggle-update-btn');
+    updateButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const formContainer = btn.nextElementSibling;
+            formContainer.classList.toggle('open');
+        });
+    });
+
+    const cancelUpdateButtons = document.querySelectorAll('.cancel-update-btn');
+    cancelUpdateButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const formContainer = btn.closest('.collapsible-update-form');
+            formContainer.classList.remove('open');
+        });
+    });
+});
+</script>
 {% endblock %}
