@@ -32,24 +32,33 @@ Users can add, update, and delete movies, fetch details from the OMDb API, and t
 ```bash
 .
 ├── LICENSE
-├── .env                       # Stores OMDb API key and Flask secret key
+├── README.md
+├── __init__.py
 ├── app.py                     # Main Flask app
-├── templates/
-│   ├── base.html
-│   └── movies.html            # Page to view and manage movies
-├── static/
-│   ├── scripts.js             # JS for collapsible menus
-│   ├── style.css              # App styling
-│   └── no-image.png           # Default poster
-├── data/
+├── app_errors.log             # Log file for errors
+├── data
 │   └── movies.db              # SQLite database
-├── storage/
-│   └── movie_storage_sql.py   # Database operations & OMDb integration
+├── data_manager.py            # Handles database operations
+├── models.py                  # SQLAlchemy models
 ├── requirements.txt           # Python dependencies
-└── README.md
+├── sqlalchemy_orm_documentation.md  # ORM reference docs
+├── static
+│   ├── scripts.js             # JavaScript for UI interactions
+│   └── style.css              # Application styling
+└── templates
+    ├── 404.html               # 404 error page
+    ├── 500.html               # 500 error page
+    ├── about.html             # About page
+    ├── base.html              # Base template for pages
+    ├── contact.html           # Contact page
+    ├── index.html             # Homepage
+    └── movies.html            # Movies management page
+
 ```
+
 ---
 
+---
 ## Installation
 
 1. **Clone the repository**
@@ -114,6 +123,643 @@ requests==2.32.4
 gunicorn==21.2.0
 flask-cors==6.0.1
 ```
+
+---
+## 💡 Detail diagram for each code block
+Our movie collection project is composed of several core code blocks, each with a distinct responsibility:
+
+- **Backend Flask App (app.py)** — The central Flask application that handles all routing, request processing, 
+and page rendering. It connects the frontend with the database through data_manager.py and models.py.
+
+- **Database Manager (data_manager.py)** — Provides an abstraction layer for all database operations. Handles 
+CRUD operations for movies in movies.db, and ensures data integrity and proper queries.
+
+- **Data Models (models.py)** — Defines SQLAlchemy models that represent movies and any related entities. 
+These models dictate the structure and constraints of the database.
+
+- **Templates (templates/*.html)** — HTML files defining the structure of pages:
+
+- **base.html provides** a consistent layout and shared components.
+
+- **index.html** serves as the homepage.
+
+- **movies.html** allows users to view, add, update, or delete movies.
+
+Other pages like about.html, contact.html, 404.html, and 500.html provide additional 
+information and error handling.
+
+- **Static Assets (static/scripts.js & static/style.css) —**
+
+**scripts.js** contains frontend logic for dynamic behavior, such as collapsible menus 
+or interactive UI elements.
+
+- **style.css** provides the styling for all HTML pages to ensure a consistent and user-friendly design.
+
+- **Database (data/movies.db)** — SQLite database storing all movie data, including titles, ratings, 
+personal notes, and other metadata fetched from the OMDb API.
+
+- **Requirements (requirements.txt)** — Lists all Python dependencies needed to run the application, 
+including Flask, SQLAlchemy, and any additional libraries like requests or pandas.
+
+Below, we present detailed diagrams and explanations for each of these code blocks to provide 
+a clearer understanding of their structure and interaction within the application.
+
+---
+## 🌐 🎬 app.py — Flask Application Setup Diagram
+
+🧠 Notes:
+
+app.py is the main Flask application for MovieWebApp.
+It initializes Flask, SQLAlchemy, and DataManager, manages routes for users and movies, handles 
+OMDb API integration, and processes the contact form via GitHub.
+All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLAlchemy models.
+
+```Bash
+┌────────────────────────────────────────────────────────────────────────────┐
+│ app.py — MovieWebApp Main Flask Application                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🧭 Purpose:                                                                │
+│  - Initialize Flask, SQLAlchemy, and DataManager                           │
+│  - Configure database & environment variables                              │
+│  - Handle routes: users, movies, contact form, about page                  │
+│  - Perform validation, logging, and error handling                         │
+│  - Delegate CRUD operations to DataManager and SQLAlchemy models           │
+├────────────────────────────────────────────────────────────────────────────┤
+│ ⚙️ Environment & Configurations                                            │
+│  ┌────────────────────────────────────────────────────────────────────┐    │
+│  │ load_dotenv() → load OMDB_API_KEY, FLASK_SECRET_KEY                │    │
+│  │ app = Flask(__name__)                                              │    │
+│  │ app.secret_key → os.environ or secrets.token_hex()                 │    │
+│  │ SQLAlchemy initialized with SQLite database at data/movies.db      │    │
+│  │ Logging setup: errors written to app_errors.log                    │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│                                                                            │
+│ 🧩 Flexible Imports:                                                       │
+│    - Works as package or standalone execution                              │
+│    - Imports DataManager and SQLAlchemy models                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🏠 Routes Overview                                                         │
+│                                                                            │
+│ ["/"] → home()                                                             │
+│  • Lists all users                                                         │
+│  • Renders index.html                                                      │
+│                                                                            │
+│ ["/users"] → add_user() [POST]                                             │
+│  • Add user with validation                                                │
+│  • Checks empty names, regex, duplicates                                   │
+│                                                                            │
+│ ["/users/<user_id>/movies"] → user_movies() [GET]                          │
+│  • Show movies for a user                                                  │
+│                                                                            │
+│ ["/users/<user_id>/movies"] → add_movie() [POST]                           │
+│  • Add movie manually or via OMDb API                                      │
+│  • Validation: year, rating, poster URL                                    │
+│  • Delegates OMDb fetch to DataManager                                     │
+│                                                                            │
+│ ["/users/<user_id>/movies/<movie_id>/update"] → update_movie() [POST]      │
+│  • Update movie details                                                    │
+│  • Validates input before updating                                         │
+│                                                                            │
+│ ["/users/<user_id>/movies/<movie_id>/delete"] → delete_movie() [POST]      │
+│  • Deletes movie from DB                                                   │
+│                                                                            │
+│ ["/about"] → about() [GET]                                                 │
+│  • Serves about.html                                                       │
+│                                                                            │
+│ ["/contact"] → contact() [GET, POST]                                       │
+│  • Displays contact form / POSTs message to GitHub via API                 │
+│                                                                            │
+│ ⚠️ Error Handlers:                                                         │
+│  - 404 → page_not_found()                                                  │
+│  - 500 → internal_server_error()                                           │
+│  • Both render respective templates with flash messages                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🧩 Context Processor                                                       │
+│  - inject_globals() adds:                                                  │
+│      • current_year → datetime.now().year                                  │
+│      • users → data_manager.get_users()                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🔄 Data Flow Summary                                                       │
+│                                                                            │
+│ [User Browser]                                                             │
+│       ↓ GET/POST Requests                                                  │
+│ app.py Routes → Validation → DataManager/SQLAlchemy                        │
+│       ↓                                                                    │
+│ DataManager → db.session → Movie/User models → SQLite movies.db            │
+│       ↓ Response                                                           │
+│ app.py → render_template → index.html/movies.html/404.html/500.html        │
+│       ↓                                                                    │
+│ Browser → Displays updated DOM                                             │
+│                                                                            │
+│ 🌐 Contact Form Flow                                                       │
+│ [Browser POST /contact] → app.py → save_contact_to_github()                │
+│       ↓                                                                    │
+│ GitHub API → Issue created in MovieWebApp repo → Success/Failure flash     │
+├────────────────────────────────────────────────────────────────────────────┤
+│ ⚡ Execution Entry Point                                                    │
+│  if __name__ == "__main__":                                                │
+│      db.create_all() → initialize SQLite DB                                │
+│      app.run(host="0.0.0.0", port=5001, debug=True)                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+```
+
+## 🌐 🎬 data_manager.py — Flask Application Setup Diagram
+```Bash
++-----------------------------------------------------+
+|                     DataManager                     |
++-----------------------------------------------------+
+| Handles CRUD for Users and Movies                   |
+| Integrates OMDb API for fetching movie details      |
++-----------------------------------------------------+
+|  USER OPERATIONS                                    |
+|  -----------------                                  |
+|  + create_user(name) -> User                        |
+|      - Adds a new user to the DB                    |
+|  + get_users() -> list[User]                        |
+|      - Returns all users                            |
++-----------------------------------------------------+
+|  MOVIE OPERATIONS                                   |
+|  -----------------                                  |
+|  + get_movies(user_id) -> list[Movie]               |
+|      - Fetches movies for a user                    |
+|  + add_movie(movie: Movie) -> Movie                 |
+|      - Adds movie object to DB                      |
+|  + update_movie(movie_id, **kwargs) -> Movie|None   |
+|      - Dynamically updates movie fields             |
+|  + delete_movie(movie_id) -> bool                   |
+|      - Deletes a movie by ID                        |
++-----------------------------------------------------+
+|  OMDb INTEGRATION                                   |
+|  -----------------                                  |
+|  + add_movie_from_omdb(movie_name, user_id)         |
+|      -> Returns (Movie|None, suggestions[], added)  |
+|      - Checks DB first                              |
+|      - Tries exact match with OMDb API              |
+|      - Returns suggestions if exact match fails     |
+|  - _fetch_movie_by_title(title, user_id) -> Movie   |
+|      - Fetches movie details by title from OMDb     |
+|  - _fetch_movie_by_imdb_id(imdb_id, user_id) -> Movie |
+|      - Fetches movie details by IMDb ID             | 
+|  - _create_movie_from_data(data, user_id) -> Movie  |
+|      - Creates and commits Movie object from OMDb   |
++-----------------------------------------------------+
+|  DEPENDENCIES                                       | 
+|  -----------------                                  |
+|  - db (SQLAlchemy)                                  |
+|  - User, Movie models                               |
+|  - requests (for OMDb API)                          |
+|  - dotenv (for OMDB_API_KEY)                        |
++-----------------------------------------------------+
+
+```
+## 🌐 🎬 models.py — Flask Application Setup Diagram
+```Bash
++---------------------------------------+
+|                User                   |
++---------------------------------------+
+| Table: user                           |
++---------------------------------------+
+| id : Integer [PK]                     |
+|    - Primary key                      |
+| name : String(100) [Not Null, Indexed]|
+|    - User's name                      |
+| created_at : DateTime                 |
+|    - Default: datetime.utcnow         |
++---------------------------------------+
+| Relationships:                        |
+| movies : List[Movie]                  |
+|    - One-to-many with Movie           |
+|    - backref='user'                   |
+|    - lazy=True                        |
+|    - cascade='all, delete-orphan'     |
++---------------------------------------+
+| Methods:                              |
+| __repr__() -> str                     |
+|    - Returns "<User {name}>"          |
++---------------------------------------+
+
+
++----------------------------------------+
+|                Movie                   |
++----------------------------------------+
+| Table: movie                           |
++----------------------------------------+
+| id : Integer [PK]                      |
+|    - Primary key                       |
+| name : String(100) [Not Null, Indexed] |
+|    - Movie title                       |
+| director : String(100) [Not Null]      |
+|    - Director name                     |
+| year : Integer [Not Null, Indexed]     |
+|    - Release year                      |
+| poster_url : String(255) [Not Null]    |
+|    - URL to movie poster               |
+| rating : Float [Nullable]              |
+|    - IMDb rating (0–10)                |
+| user_id : Integer [FK -> user.id]      |
+|    - Foreign key to User               |
+| created_at : DateTime                  |
+|    - Default: datetime.utcnow          |
++----------------------------------------+
+| Relationships:                         |
+| user : User                            |
+|    - Many-to-one with User             |
++----------------------------------------+
+| Methods:                               |
+| __repr__() -> str                      |
+|    - Returns "<Movie {name}>"          |
++----------------------------------------+
+```
+
+## 🧩 base.html — Project Structure Diagram
+```Bash
+┌─────────────────────────────────────────────────────────────────────────-──────────────────────────┐
+│ base.html                                                                                          │
+├────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ <head>                                                                                             │
+│  • Metadata (charset, viewport)                                                                    │
+│  • Title block: {% block title %}MovieWeb App{% endblock %}                                        │
+│  • <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                    │
+│                                                                                                    │
+│ <body>                                                                                             │
+│  ┌────────────────────────────────────────────────────────────────────────────────────────────┐    │
+│  │ <header>                                                                                   │    │
+│  │  • Left reel: 🎞️ div.reel-left                                                             │    │
+│  │  • Header center: h1 + nav                                                                 │    │
+│  │      ┌──────────────────────────────────────────────────────────────────────────────────┐  │    │
+│  │      │ h1: Title "MovieWeb App" + rainbow emojis 🌈                                     │  │    │
+│  │      │ <nav class="nav-bar">                                                            │  │    │
+│  │      │   • <ul>                                                                         │  │    │
+│  │      │       <li><a href="{{ url_for('home') }}">Home</a></li>                          │  │    │
+│  │      │       <li><a href="{{ url_for('contact') }}">Contact</a></li>                    │  │    │
+│  │      │       <li><a href="{{ url_for('about') }}">About</a></li>                        │  │    │
+│  │      │   </ul>                                                                          │  │    │
+│  │      └──────────────────────────────────────────────────────────────────────────────────┘  │    │
+│  │  • Right reel: 🎞️ div.reel-right                                                           │    │
+│  └────────────────────────────────────────────────────────────────────────────────────────────┘    │
+│                                                                                                    │
+│  ┌────────────────────────────────────────────────────────────────────────────────────────────┐    │
+│  │ <div class="wrapper">                                                                      │    │
+│  │                                                                                            │    │
+│  │  ┌──────────────────────────────────────────────────────────────────────────────────────┐  │    │
+│  │  │ Left Sidebar (users)                                                                 │  │    │
+│  │  │ {% if request.endpoint != 'home' %}                                                  │  │    │
+│  │  │   • <h3>🎬 Users</h3>                                                                │  │    │
+│  │  │   • <ul>                                                                             │  │    │
+│  │  │       {% for user in users %}                                                        │  │    │
+│  │  │         <li class="{% if current_user.id == user.id %}active{% endif %}">            │  │    │
+│  │  │           <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>│  │    │
+│  │  │         </li>                                                                        │  │    │
+│  │  │       {% endfor %}                                                                   │  │    │
+│  │  │   </ul>                                                                              │  │    │
+│  │  │ {% else %}                                                                           │  │    │
+│  │  │   <div class="empty-sidebar"></div>                                                  │  │    │
+│  │  │ {% endif %}                                                                          │  │    │
+│  │  └──────────────────────────────────────────────────────────────────────────────────────┘  │    │
+│  │                                                                                            │    │
+│  │  ┌─────────────────────────────────────────────────────────────────────────┐               │    │
+│  │  │ Main Content                                                            │               │    │
+│  │  │ {% if request.endpoint != 'home' %}                                     │               │    │
+│  │  │   • Back to Home Button: <a href="{{ url_for('home') }}">🏠 ← Back</a>  │               │    │  
+│  │  │ {% endif %}                                                             │               │    │
+│  │  │ {% block content %}{% endblock %}                                       │               │    │
+│  │  └─────────────────────────────────────────────────────────────────────────┘               │    │
+│  │                                                                                            │    │
+│  │  ┌────────────────────────────────────────────────────────────────────────┐                │    │
+│  │  │ Right Sidebar (empty)                                                  │                │    │
+│  │  │ <div class="empty-sidebar"></div>                                      │                │    │
+│  │  └────────────────────────────────────────────────────────────────────────┘                │    │
+│  └────────────────────────────────────────────────────────────────────────────────────────────┘    │
+│                                                                                                    │
+│  ┌────────────────────────────────────────────────────────────────────┐                            │
+│  │ Flash Messages                                                     │                            │
+│  │ {% with messages = get_flashed_messages(with_categories=true) %}   │                            │
+│  │   {% if messages %}                                                │                            │
+│  │     • <div class="flash-messages">                                 │                            │
+│  │     • {% for category, msg in messages %}                          │                            │
+│  │         <div class="flash {{ category }}">{{ msg }}</div>          │                            │
+│  │       {% endfor %}                                                 │                            │
+│  │     </div>                                                         │                            │
+│  │   {% endif %}                                                      │                            │
+│  │ {% endwith %}                                                      │                            │
+│  └────────────────────────────────────────────────────────────────────┘                            │
+│                                                                                                    │
+│  <footer> &copy; {{ current_year }} MovieWeb App </footer>                                         │
+│                                                                                                    │
+│  <script src="{{ url_for('static', filename='scripts.js') }}"></script>                            │
+└────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+```
+
+## 🧩 Index.html — Project Structure Diagram
+
+```Bash
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ home.html                                                                         │
+├───────────────────────────────────────────────────────────────────────────────────┤
+│ {% extends "base.html" %}                                                         │
+│ {% block title %}Home - MovieWeb{% endblock %}                                    │
+│                                                                                   │
+│ {% block content %}                                                               │
+│  ┌───────────────────────────────────────────────────────────────────────────┐    │
+│  │ <section class="users-section">                                           │    │
+│  │                                                                           │    │
+│  │  • <h2>🧑‍🎤 All Users</h2>                                                  │    │
+│  │                                                                           │    │
+│  │  ┌───────────────────────────────────────────────────────────────────┐    │    │
+│  │  │ Users List                                                        │    │    │
+│  │  │ {% if users %}                                                    │    │    │
+│  │  │   <ul class="user-list">                                          │    │    │
+│  │  │     {% for user in users %}                                       │    │    │
+│  │  │       <li>                                                        │    │    │
+│  │  │         <a href="{{ url_for('user_movies', user_id=user.id) }}">  │    │    │
+│  │  │           🎬 {{ user.name }}                                      │    │    │
+│  │  │         </a>                                                      │    │    │
+│  │  │       </li>                                                       │    │    │
+│  │  │     {% endfor %}                                                  │    │    │
+│  │  │   </ul>                                                           │    │    │
+│  │  │ {% else %}                                                        │    │    │
+│  │  │   <p>No users found. Add a new user below!</p>                    │    │    │
+│  │  │ {% endif %}                                                       │    │    │
+│  │  └───────────────────────────────────────────────────────────────────┘    │    │
+│  │                                                                           │    │
+│  │  <hr>                                                                     │    │
+│  │                                                                           │    │
+│  │  ┌────────────────────────────────────────────────────────────┐           │    │
+│  │  │ Add New User Form                                          │           │    │
+│  │  │ <form action="{{ url_for('add_user') }}" method="POST">    │           │    │
+│  │  │   • Input: User Name (required)                            │           │    │
+│  │  │   • Button: Add User                                       │           │    │
+│  │  └────────────────────────────────────────────────────────────┘           │    │
+│  └───────────────────────────────────────────────────────────────────────────┘    │
+│ {% endblock %}                                                                    │
+└───────────────────────────────────────────────────────────────────────────────────┘
+
+```
+
+## 🧩 movies.html — Project Structure Diagram
+```Bash
+┌────────────────────────────────────────────────────────────────────────────────────────────┐
+│ movies.html                                                                                │
+├────────────────────────────────────────────────────────────────────────────────────────────┤
+│ {% extends "base.html" %}                                                                  │
+│ {% block title %}{{ user.name }}'s Movies{% endblock %}                                    │
+│                                                                                            │
+│ {% block content %}                                                                        │
+│  ┌────────────────────────────────────────────────────────────────────────────────────┐    │
+│  │ <section class="movies-section">                                                   │    │
+│  │                                                                                    │    │
+│  │  • <h2>🎬 {{ user.name }}’s Favorite Movies</h2>                                   │    │
+│  │                                                                                    │    │
+│  │  ┌──────────────────────────────────────────────────────────────┐                  │    │
+│  │  │ Add Movie Toggle Button                                      │                  │    │
+│  │  │ <button id="toggleAddMovie">➕ Add Movie</button>            │                  │    │
+│  │  └──────────────────────────────────────────────────────────────┘                  │    │
+│  │                                                                                    │    │
+│  │  ┌────────────────────────────────────────────────────────────────────────────┐    │    │
+│  │  │ Collapsible Add Movie Form                                                 │    │    │
+│  │  │ <form method="POST" action="{{ url_for('add_movie', user_id=user.id) }}">  │    │    │
+│  │  │  • Input: Movie Name (required)                                            │    │    │
+│  │  │  • Input: Director (optional)                                              │    │    │
+│  │  │  • Input: Year (number, min 1888, max current_year+1)                      │    │    │
+│  │  │  • Input: Rating (0–10, optional)                                          │    │    │
+│  │  │  • Buttons: Submit (🔍 Search & Add), Cancel (✖)                           │    │    │
+│  │  │  • Info: Auto-fetch from OMDb                                              │    │    │
+│  │  └────────────────────────────────────────────────────────────────────────────┘    │    │
+│  │                                                                                    │    │
+│  │  <hr>                                                                              │    │
+│  │                                                                                    │    │
+│  │  ┌────────────────────────────────────────────────────────────────────────────┐    │    │
+│  │  │ Movies Grid                                                                │    │    │
+│  │  │ {% if movies %}                                                            │    │    │
+│  │  │   {% for movie in movies %}                                                │    │    │
+│  │  │                                                                            │    │    │
+│  │  │   ┌──────────────────────────────────────────────────────┐                 │    │    │
+│  │  │   │ Movie Card                                           │                 │    │    │
+│  │  │   │ • Poster Image (with fallback if missing)            │                 │    │    │
+│  │  │   │ • Movie Details:                                     │                 │    │    │
+│  │  │   │     - Name                                           │                 │    │    │
+│  │  │   │     - Director                                       │                 │    │    │
+│  │  │   │     - Year                                           │                 │    │    │
+│  │  │   │     - Rating (displayed as stars & numeric)          │                 │    │    │
+│  │  │   │ • Toggle Update Button: ✏️ Rename                    │                 │    │    │
+│  │  │   │ • Collapsible Update Form                            │                 │    │    │
+│  │  │   │     - Input: New Title                               │                 │    │    │
+│  │  │   │     - Buttons: Update, Cancel                        │                 │    │    │
+│  │  │   │ • Delete Form                                        │                 │    │    │
+│  │  │   │     - Button: Delete                                 │                 │    │    │
+│  │  │   └──────────────────────────────────────────────────────┘                 │    │    │
+│  │  │ {% endfor %}                                                               │    │    │
+│  │  │ {% else %}                                                                 │    │    │
+│  │  │   <p>No movies found message + prompt to add movie</p>                     │    │    │
+│  │  │ {% endif %}                                                                │    │    │
+│  │  └────────────────────────────────────────────────────────────────────────────┘    │    │
+│  └────────────────────────────────────────────────────────────────────────────────────┘    │
+│ {% endblock %}                                                                             │
+└────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+```
+## 🧩 contact.html — Project Structure Diagram
+```Bash
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│ contact.html                                                                     │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ {% extends "base.html" %}                                                        │
+│ {% block title %}Contact Us{% endblock %}                                        │
+│                                                                                  │
+│ {% block content %}                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────────┐    │
+│  │ <section class="contact-section">                                        │    │
+│  │                                                                          │    │
+│  │  • <h2>Contact Us 📬</h2>                                                │    │
+│  │  • <p>Prompt for questions, suggestions, or feedback</p>                 │    │
+│  │                                                                          │    │
+│  │  ┌──────────────────────────────────────────────────────────────────┐    │    │
+│  │  │ Flash Messages                                                   │    │    │
+│  │  │ {% with messages = get_flashed_messages(with_categories=true) %} │    │    │
+│  │  │   {% if messages %}                                              │    │    │
+│  │  │     <ul class="flash-messages">                                  │    │    │
+│  │  │       {% for category, message in messages %}                    │    │    │
+│  │  │         <li class="{{ category }}">{{ message }}</li>            │    │    │
+│  │  │       {% endfor %}                                               │    │    │
+│  │  │     </ul>                                                        │    │    │
+│  │  │   {% endif %}                                                    │    │    │
+│  │  │ {% endwith %}                                                    │    │    │
+│  │  └──────────────────────────────────────────────────────────────────┘    │    │
+│  │                                                                          │    │
+│  │  ┌──────────────────────────────────────────────────────────────────┐    │    │
+│  │  │ Contact Form                                                     │    │    │
+│  │  │ <form action="{{ url_for('contact') }}" method="POST">           │    │    │
+│  │  │  • Input: Name (required)                                        │    │    │
+│  │  │  • Input: Email (required)                                       │    │    │
+│  │  │  • Textarea: Message (required)                                  │    │    │
+│  │  │  • Button: Send Message                                          │    │    │
+│  │  └──────────────────────────────────────────────────────────────────┘    │    │
+│  └──────────────────────────────────────────────────────────────────────────┘    │
+│ {% endblock %}                                                                   │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+```
+## 🧩 about.html — Project Structure Diagram
+
+```Bash
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ about.html                                                                    │
+├───────────────────────────────────────────────────────────────────────────────┤
+│ {% extends "base.html" %}                                                     │
+│ {% block title %}About Us{% endblock %}                                       │
+│                                                                               │
+│ {% block content %}                                                           │
+│  ┌───────────────────────────────────────────────────────────────────────┐    │
+│  │ <section class="about-section">                                       │    │
+│  │                                                                       │    │
+│  │  • <h2>About MovieWebApp 🎬</h2>                                      │    │
+│  │                                                                       │    │
+│  │  • <p>Welcome message explaining the purpose of the platform.</p>     │    │
+│  │                                                                       │    │
+│  │  • <p>Mission statement about making movie management fun & easy.</p> │    │
+│  │                                                                       │    │
+│  │  • <p>Introduction to main features:</p>                              │    │
+│  │                                                                       │    │
+│  │  ┌──────────────────────────────────────────────────────────────┐     │    │
+│  │  │ Features List                                                │     │    │
+│  │  │ <ul>                                                         │     │    │
+│  │  │   <li>Personalized movie lists</li>                          │     │    │
+│  │  │   <li>Automatic OMDb integration</li>                        │     │    │
+│  │  │   <li>Rating and review management</li>                      │     │    │
+│  │  │   <li>Easy editing and deleting of movies</li>               │     │    │
+│  │  │ </ul>                                                        │     │    │
+│  │  └──────────────────────────────────────────────────────────────┘     │    │
+│  └───────────────────────────────────────────────────────────────────────┘    │
+│ {% endblock %}                                                                │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+
+```
+## 🧩 scripts.js — Project Structure Diagram
+
+```Bash
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│ scripts.js                                                                          │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│ document.addEventListener('DOMContentLoaded', () => {                               │
+│                                                                                     │
+│  // -----------------------------                                                   │
+│  // Flash Messages Auto-Dismiss                                                     │
+│  // -----------------------------                                                   │
+│  ┌────────────────────────────────────────────────────────────────────┐             │
+│  │ const flashes = document.querySelectorAll(".flash")                │             │
+│  │ flashes.forEach(flash => {                                         │             │
+│  │     setTimeout(() => {                                             │             │
+│  │         flash.classList.add("fade-out")                            │             │
+│  │         setTimeout(() => flash.remove(), 1000)                     │             │
+│  │     }, 4000)                                                       │             │
+│  │ })                                                                 │             │
+│  └────────────────────────────────────────────────────────────────────┘             │
+│  → Automatically fades out flash messages 4 seconds after display                   │
+│                                                                                     │
+│  // -----------------------------                                                   │
+│  // Add Movie Form Toggle                                                           │
+│  // -----------------------------                                                   │
+│  ┌────────────────────────────────────────────────────────────────────┐             │
+│  │ const toggleAddBtn = document.getElementById("toggleAddMovie")     │             │
+│  │ const addFormContainer = document.getElementById("addMovieForm")   │             │
+│  │ const cancelAddBtn = document.getElementById("cancelAddMovie")     │             │
+│  │                                                                    │             │
+│  │ toggleAddBtn.addEventListener("click", () => {                     │             │
+│  │     addFormContainer.classList.toggle("open")                      │             │
+│  │     toggleAddBtn.textContent = ...                                 │             │
+│  │ })                                                                 │             │
+│  │                                                                    │             │
+│  │ cancelAddBtn.addEventListener("click", () => {                     │             │
+│  │     addFormContainer.classList.remove("open")                      │             │
+│  │     toggleAddBtn.textContent = "➕ Add Movie"                      │             │
+│  │ })                                                                 │             │
+│  └────────────────────────────────────────────────────────────────────┘             │
+│  → Opens/closes "Add Movie" form and updates button text                            │
+│                                                                                     │
+│  // -----------------------------                                                   │
+│  // Update Movie Form Toggle                                                        │
+│  // -----------------------------                                                   │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │ const updateButtons = document.querySelectorAll('.toggle-update-btn')       │    │
+│  │ updateButtons.forEach(btn => {                                              │    │
+│  │     btn.addEventListener('click', () => {                                   │    │
+│  │         const formContainer = btn.nextElementSibling                        │    │
+│  │         formContainer.classList.toggle('open')                              │    │
+│  │     })                                                                      │    │
+│  │ })                                                                          │    │
+│  │                                                                             │    │
+│  │ const cancelUpdateButtons = document.querySelectorAll('.cancel-update-btn') │    │
+│  │ cancelUpdateButtons.forEach(btn => {                                        │    │
+│  │     btn.addEventListener('click', () => {                                   │    │
+│  │         const formContainer = btn.closest('.collapsible-update-form')       │    │
+│  │         formContainer.classList.remove('open')                              │    │
+│  │     })                                                                      │    │
+│  │ })                                                                          │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│  → Toggles "Update Movie" forms per movie card, with cancel button                  │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+```
+## 💡 Future Enhancements
+## 1. Medium-Term Goals (3–6 months)
+
+**Focus:** Enhance features and interactivity.
+
+### 🎬 User Authentication
+- Add login/register functionality (Flask-Login).  
+- Make movie lists private by default; allow sharing.
+
+### 📊 Movie Statistics & Sorting
+- Filter movies by rating, year, or director.  
+- Add charts (e.g., most-watched director, average rating).
+
+### 🌐 External API Enhancements
+- Fetch trailers or reviews from YouTube / TMDb.  
+- Auto-update missing movie posters or data.
+
+### 🗂 Search & Pagination
+- Implement search by movie name or director.  
+- Paginate user’s movie lists for large collections.
+
+---
+
+## 2. Long-Term Goals (6–12 months)
+
+**Focus:** Scale, social features, and advanced architecture.
+
+### 🌟 User Profiles & Social Features
+- Profiles with avatar, bio, and movie stats.  
+- Follow/friend system; see friends’ favorite movies.
+
+### ☁️ Cloud Deployment & Database Scaling
+- Deploy on AWS, Heroku, or DigitalOcean.  
+- Use PostgreSQL for better scalability.
+
+### ⚡ Performance Optimizations
+- Cache OMDb API responses for faster load.  
+- Minify CSS/JS, lazy-load images.
+
+### 📱 Mobile App or PWA
+- Turn MovieWeb into a Progressive Web App.  
+- Offline access to user’s movie list.
+
+### 🔒 Security & Data Privacy
+- HTTPS, password hashing, rate-limiting API calls.  
+- GDPR-compliant data handling.
+
+---
+
+### Optional Advanced Features
+- 🎥 Movie Recommendations based on user ratings.  
+- 🏆 Leaderboards for top-rated movies/users.  
+- ✍️ Movie Reviews & Comments section per movie.  
+- 🔔 Email Notifications for updates, new features, or friend activity.
+
 
 ### ✨ Acknowledgments
 Masterschool
