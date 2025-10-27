@@ -85,20 +85,9 @@
 </footer>
 
 <!-- Auto-dismiss flash messages -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const flashes = document.querySelectorAll(".flash");
 
-  flashes.forEach(flash => {
-    // Show for 4 seconds, then fade out
-    setTimeout(() => {
-      flash.classList.add("fade-out");
-      // Remove from DOM after fade-out completes
-      setTimeout(() => flash.remove(), 1000);
-    }, 4000);
-  });
-});
-</script>
+<!-- 🎬 Collapsible Scripts -->
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
 
 </body>
 </html>
