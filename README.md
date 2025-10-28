@@ -1,25 +1,25 @@
 # 🎬 MovieWebApp
 <img width="1692" height="1079" alt="Screenshot 2025-10-27 at 20 46 14" src="https://github.com/user-attachments/assets/56786563-4c71-4c9e-be31-47cc620fd44a" />
 
-MovieWebApp is a Flask-based web application that allows users to create personal movie collections. 
-Users can add, update, and delete movies, fetch details from the OMDb API, and track ratings.  
+MovieWebApp is a Flask-based web application that allows users to create personal movie collections.
+Users can add, update, and delete movies, fetch details from the OMDb API, and track ratings.
 
 ---
-
+## Online Deployed: Website link: [https://abhisakh.pythonanywhere.com/](https://abhisakh.pythonanywhere.com/)
 ## Features
 
 - ✅ User management: add multiple users
 -  👥 User Profiles       | Each user has a personalized movie collection.
   <img width="1692" height="1079" alt="Screenshot 2025-10-27 at 20 47 44" src="https://github.com/user-attachments/assets/23f1f1d3-7fb9-4dd5-a8a0-2c04c7dc1e13" />
 
-- � Add Movies            | Add movies via a form; details fetched automatically from OMDb API.       
-- ✏️ Rename Movies        | Rename movies directly from the movie grid using a collapsible form.      
+- � Add Movies            | Add movies via a form; details fetched automatically from OMDb API.
+- ✏️ Rename Movies        | Rename movies directly from the movie grid using a collapsible form.
 - 🗑 Delete Movies        | Remove movies from your collection.
   <img width="1692" height="1079" alt="Screenshot 2025-10-27 at 20 48 16" src="https://github.com/user-attachments/assets/b401e983-055a-4d9b-8ac1-78dd9f1df55c" />
 
-- ✅ OMDb API integration for automatic movie details  
+- ✅ OMDb API integration for automatic movie details
 - ✅ Collapsible forms for a clean UI
-- ✅ Star ratings and poster display  
+- ✅ Star ratings and poster display
 - <img width="964" height="721" alt="Screenshot 2025-10-27 at 20 53 36" src="https://github.com/user-attachments/assets/e5759138-c744-40d8-abe9-6692e29f118f" />
 - ✅ Contact form integrated with GitHub Issues
 <img width="1399" height="880" alt="Screenshot 2025-10-27 at 20 55 10" src="https://github.com/user-attachments/assets/a2079511-79b5-4aa3-bb9c-53d4d45d4450" />
@@ -128,13 +128,13 @@ flask-cors==6.0.1
 ## 💡 Detail diagram for each code block
 Our movie collection project is composed of several core code blocks, each with a distinct responsibility:
 
-- **Backend Flask App (app.py)** — The central Flask application that handles all routing, request processing, 
+- **Backend Flask App (app.py)** — The central Flask application that handles all routing, request processing,
 and page rendering. It connects the frontend with the database through data_manager.py and models.py.
 
-- **Database Manager (data_manager.py)** — Provides an abstraction layer for all database operations. Handles 
+- **Database Manager (data_manager.py)** — Provides an abstraction layer for all database operations. Handles
 CRUD operations for movies in movies.db, and ensures data integrity and proper queries.
 
-- **Data Models (models.py)** — Defines SQLAlchemy models that represent movies and any related entities. 
+- **Data Models (models.py)** — Defines SQLAlchemy models that represent movies and any related entities.
 These models dictate the structure and constraints of the database.
 
 - **Templates (templates/*.html)** — HTML files defining the structure of pages:
@@ -145,23 +145,23 @@ These models dictate the structure and constraints of the database.
 
 - **movies.html** allows users to view, add, update, or delete movies.
 
-Other pages like about.html, contact.html, 404.html, and 500.html provide additional 
+Other pages like about.html, contact.html, 404.html, and 500.html provide additional
 information and error handling.
 
 - **Static Assets (static/scripts.js & static/style.css) —**
 
-**scripts.js** contains frontend logic for dynamic behavior, such as collapsible menus 
+**scripts.js** contains frontend logic for dynamic behavior, such as collapsible menus
 or interactive UI elements.
 
 - **style.css** provides the styling for all HTML pages to ensure a consistent and user-friendly design.
 
-- **Database (data/movies.db)** — SQLite database storing all movie data, including titles, ratings, 
+- **Database (data/movies.db)** — SQLite database storing all movie data, including titles, ratings,
 personal notes, and other metadata fetched from the OMDb API.
 
-- **Requirements (requirements.txt)** — Lists all Python dependencies needed to run the application, 
+- **Requirements (requirements.txt)** — Lists all Python dependencies needed to run the application,
 including Flask, SQLAlchemy, and any additional libraries like requests or pandas.
 
-Below, we present detailed diagrams and explanations for each of these code blocks to provide 
+Below, we present detailed diagrams and explanations for each of these code blocks to provide
 a clearer understanding of their structure and interaction within the application.
 
 ---
@@ -170,7 +170,7 @@ a clearer understanding of their structure and interaction within the applicatio
 🧠 Notes:
 
 app.py is the main Flask application for MovieWebApp.
-It initializes Flask, SQLAlchemy, and DataManager, manages routes for users and movies, handles 
+It initializes Flask, SQLAlchemy, and DataManager, manages routes for users and movies, handles
 OMDb API integration, and processes the contact form via GitHub.
 All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLAlchemy models.
 
@@ -300,11 +300,11 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 |  - _fetch_movie_by_title(title, user_id) -> Movie   |
 |      - Fetches movie details by title from OMDb     |
 |  - _fetch_movie_by_imdb_id(imdb_id, user_id) -> Movie |
-|      - Fetches movie details by IMDb ID             | 
+|      - Fetches movie details by IMDb ID             |
 |  - _create_movie_from_data(data, user_id) -> Movie  |
 |      - Creates and commits Movie object from OMDb   |
 +-----------------------------------------------------+
-|  DEPENDENCIES                                       | 
+|  DEPENDENCIES                                       |
 |  -----------------                                  |
 |  - db (SQLAlchemy)                                  |
 |  - User, Movie models                               |
@@ -421,7 +421,7 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │  │  ┌─────────────────────────────────────────────────────────────────────────┐               │    │
 │  │  │ Main Content                                                            │               │    │
 │  │  │ {% if request.endpoint != 'home' %}                                     │               │    │
-│  │  │   • Back to Home Button: <a href="{{ url_for('home') }}">🏠 ← Back</a>  │               │    │  
+│  │  │   • Back to Home Button: <a href="{{ url_for('home') }}">🏠 ← Back</a>  │               │    │
 │  │  │ {% endif %}                                                             │               │    │
 │  │  │ {% block content %}{% endblock %}                                       │               │    │
 │  │  └─────────────────────────────────────────────────────────────────────────┘               │    │
@@ -872,19 +872,19 @@ GLOBAL STYLES
 **Focus:** Enhance features and interactivity.
 
 ### 🎬 User Authentication
-- Add login/register functionality (Flask-Login).  
+- Add login/register functionality (Flask-Login).
 - Make movie lists private by default; allow sharing.
 
 ### 📊 Movie Statistics & Sorting
-- Filter movies by rating, year, or director.  
+- Filter movies by rating, year, or director.
 - Add charts (e.g., most-watched director, average rating).
 
 ### 🌐 External API Enhancements
-- Fetch trailers or reviews from YouTube / TMDb.  
+- Fetch trailers or reviews from YouTube / TMDb.
 - Auto-update missing movie posters or data.
 
 ### 🗂 Search & Pagination
-- Implement search by movie name or director.  
+- Implement search by movie name or director.
 - Paginate user’s movie lists for large collections.
 
 ---
@@ -894,31 +894,31 @@ GLOBAL STYLES
 **Focus:** Scale, social features, and advanced architecture.
 
 ### 🌟 User Profiles & Social Features
-- Profiles with avatar, bio, and movie stats.  
+- Profiles with avatar, bio, and movie stats.
 - Follow/friend system; see friends’ favorite movies.
 
 ### ☁️ Cloud Deployment & Database Scaling
-- Deploy on AWS, Heroku, or DigitalOcean.  
+- Deploy on AWS, Heroku, or DigitalOcean.
 - Use PostgreSQL for better scalability.
 
 ### ⚡ Performance Optimizations
-- Cache OMDb API responses for faster load.  
+- Cache OMDb API responses for faster load.
 - Minify CSS/JS, lazy-load images.
 
 ### 📱 Mobile App or PWA
-- Turn MovieWeb into a Progressive Web App.  
+- Turn MovieWeb into a Progressive Web App.
 - Offline access to user’s movie list.
 
 ### 🔒 Security & Data Privacy
-- HTTPS, password hashing, rate-limiting API calls.  
+- HTTPS, password hashing, rate-limiting API calls.
 - GDPR-compliant data handling.
 
 ---
 
 ### Optional Advanced Features
-- 🎥 Movie Recommendations based on user ratings.  
-- 🏆 Leaderboards for top-rated movies/users.  
-- ✍️ Movie Reviews & Comments section per movie.  
+- 🎥 Movie Recommendations based on user ratings.
+- 🏆 Leaderboards for top-rated movies/users.
+- ✍️ Movie Reviews & Comments section per movie.
 - 🔔 Email Notifications for updates, new features, or friend activity.
 
 
