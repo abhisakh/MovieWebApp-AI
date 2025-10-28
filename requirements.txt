@@ -1,28 +1,13 @@
-# Flask web framework
 Flask==3.1.2
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==4.1.0
 flask-cors==6.0.1
-
-# Database
-SQLAlchemy==2.0.43
-
-# AI Integration / Google Gemini
 google-ai-generativelanguage==0.6.15
 google-genai==1.46.0
-
-# API / HTTP
-requests==2.32.4
-httpx==0.28.1
-
-# Data processing
-pandas==2.3.1
-numpy==2.3.1
-
-# Optional utilities for AI / text
+google-api-core==2.28.0
+protobuf==5.29.5
 pydantic==2.11.7
 pydantic_core==2.33.2
+requests==2.32.4
 python-dotenv==1.1.1
-
-# Frontend support (optional, for emoji / rich output)
-rich==14.1.0
+Werkzeug==3.1.3
