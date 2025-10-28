@@ -179,8 +179,8 @@ def add_movie(user_id):
             movie = Movie(
                 name=movie_name,
                 director=director or "Unknown",
-                year=year_val,
-                rating=rating_val,
+                year=year_val or 0,
+                rating=rating_val or 0.0,
                 poster_url="",
                 user_id=user_id
             )
@@ -190,14 +190,17 @@ def add_movie(user_id):
             return redirect(url_for("user_movies", user_id=user_id))
 
         # OMDb fetch
-        movie, suggestions = data_manager.add_movie_from_omdb(movie_name, user_id)
-        if movie:
+        movie, suggestions, added = data_manager.add_movie_from_omdb(movie_name, user_id)
+        if movie and added:
             flash(f"✅ '{movie.name}' added from OMDb!", "success")
+        elif movie and not added:
+            flash(f"⚠️ '{movie.name}' already exists in your list.", "info")
         else:
             msg = f"❌ Movie '{movie_name}' not found."
             if suggestions:
                 msg += " Did you mean: " + ", ".join([s.title() for s in suggestions]) + "?"
             flash(msg, "error")
+
 
         return redirect(url_for("user_movies", user_id=user_id))
 
