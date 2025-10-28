@@ -3,18 +3,70 @@
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-<section class="about-section">
-    <h2>About MovieWebApp 🎬</h2>
-    <p>Welcome to MovieWebApp! This platform allows users to keep track of their favorite movies, add ratings, and fetch details automatically from OMDb.</p>
+<section class="about-section container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Welcome to MovieWebApp 🎬</h1>
+        <p class="lead text-muted">Discover, manage, and enjoy your favorite movies with ease.</p>
+    </div>
 
-    <p>Our mission is to make managing and discovering movies fun and easy. We aim to provide a seamless experience for movie lovers everywhere!</p>
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <img src="{{ url_for('static', filename='movie_welcome.jpg') }}" class="img-fluid rounded shadow-sm" alt="Movies illustration">
+        </div>
+        <div class="col-md-6">
+            <p class="fs-5">MovieWebApp is your personal movie companion! Track your favorites, add ratings, and fetch details automatically from OMDb.</p>
+            <p class="fs-5">Our mission is to make managing and discovering movies <strong>fun</strong> and <strong>easy</strong>. We aim to provide a seamless experience for movie lovers everywhere!</p>
+        </div>
+    </div>
 
-    <p>Features include:</p>
-    <ul>
-        <li>Personalized movie lists</li>
-        <li>Automatic OMDb integration</li>
-        <li>Rating and review management</li>
-        <li>Easy editing and deleting of movies</li>
-    </ul>
+    <div class="text-center mb-4">
+        <h3 class="fw-bold mb-3">Features</h3>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-person-circle fs-1 mb-3 text-primary"></i>
+                    <h5 class="card-title fw-bold">Personalized Lists</h5>
+                    <p class="card-text">Create and manage your own movie lists effortlessly.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-cloud-arrow-down fs-1 mb-3 text-success"></i>
+                    <h5 class="card-title fw-bold">Automatic OMDb Integration</h5>
+                    <p class="card-text">Fetch movie details and posters automatically from OMDb.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-star fs-1 mb-3 text-warning"></i>
+                    <h5 class="card-title fw-bold">Ratings & Reviews</h5>
+                    <p class="card-text">Rate your movies and keep track of your favorites easily.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-pencil-square fs-1 mb-3 text-danger"></i>
+                    <h5 class="card-title fw-bold">Easy Editing</h5>
+                    <p class="card-text">Edit or delete movie entries quickly without hassle.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <p class="text-muted">💡 Join MovieWebApp today and explore a better way to manage your movie collection!</p>
+    </div>
 </section>
 {% endblock %}

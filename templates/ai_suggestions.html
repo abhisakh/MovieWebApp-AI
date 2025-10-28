@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}AI Movie Suggestions{% endblock %}
+
+{% block content %}
+<div class="container mt-4 ai-search-area">
+
+    <h2 class="mb-3">🎬 AI Movie Suggestions</h2>
+
+    {# 💡 ADDED ID for JavaScript targeting #}
+    <form method="POST" class="mb-4" action="{{ url_for('ai_suggest') }}" id="ai-search-form">
+        {# CRUCIAL FIX: Added flex-nowrap to keep the input and button on one line #}
+        <div class="input-group mb-2 flex-nowrap align-items-center">
+            <input
+                type="text"
+                name="movie_query"
+                class="form-control flex-grow-1"
+                placeholder="Search for movies, genres, or complex topics (e.g., 'A movie like Arrival')"
+                value="{{ query }}"
+                required
+            >
+            {# 💡 ADDED ID for JavaScript targeting #}
+            <button type="submit" class="btn btn-primary" id="search-button">
+                <i class="bi bi-search"></i> Get Suggestions
+            </button>
+
+            {# 💡 ADDED: HTML for the loading spinner. This element will be shown by JS. #}
+            <div class="loading-spinner" id="loading-indicator"></div>
+
+        </div>
+
+        {# HTML STRUCTURE FIX: Moved the list description outside the list itself #}
+        <div class="text-muted small ms-1">
+            <strong>** Few example queries: **</strong>
+            <ul class="list-unstyled d-flex flex-wrap gap-3 ms-2 mt-2">
+                <li class="suggestion-tag">"Best sci-fi movies of the last 5 years"</li>
+                <li class="suggestion-tag">"Movies directed by Christopher Nolan"</li>
+                <li class="suggestion-tag">"Underrated horror films from the 90s"</li>
+                <li class="suggestion-tag">"What to watch after Dune"</li>
+            </ul>
+        </div>
+    </form>
+
+    {% if query %}
+        <h5 class="mb-3">Results for "<strong>{{ query }}</strong>":</h5>
+    {% endif %}
+
+    {% if model_name %}
+        <p class="text-muted small mb-2">Model used: <strong>{{ model_name }}</strong></p>
+    {% endif %}
+
+    {% if suggestions %}
+
+        {# 1. USER SELECTION FOR ADDING MOVIES #}
+        <div class="d-flex justify-content-end align-items-center mb-3">
+            <label for="target_user" class="me-2 text-muted small">Add to:</label>
+            <select id="target_user" class="form-select w-auto" style="min-width: 150px;">
+                {% for user in users %}
+                    <option value="{{ user.id }}" {% if current_user and user.id == current_user.id %}selected{% endif %}>{{ user.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <ul class="list-group shadow-sm">
+            {% for movie in suggestions %}
+                {# The list-group-item handles the outer flex/layout #}
+                <li class="list-group-item">
+
+                    {# Content Wrapper: Takes up most of the space #}
+                    <div class="d-flex align-items-center flex-grow-1 me-3">
+
+                        {# Display the movie poster image #}
+                        {% if movie.poster_url %}
+                            {# .suggestion-poster class from CSS controls size and style #}
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster" class="me-3 rounded shadow-sm suggestion-poster">
+                        {% endif %}
+
+                        <div>
+                            <span class="fw-bold">{{ loop.index }}.</span>
+                            {% if movie.title %}
+                                <strong class="fs-5">{{ movie.title }}</strong>
+
+                                {# Star Rating Display (Visualization Trick) #}
+                                {% if movie.rating and movie.rating > 0 %}
+                                    <span class="ms-2">
+                                        {% set stars = (movie.rating / 2) | float %}
+                                        {% set stars_rounded = (stars * 4) | round / 4 %}
+                                        {% for i in range(1, 6) %}
+                                            {% if stars_rounded >= i %}
+                                                <span class="star">&#9733;</span>
+                                            {% else %}
+                                                <span class="star-empty">&#9733;</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <small class="text-muted">({{ movie.rating | round(1) }}/10)</small>
+                                    </span>
+                                {% endif %}
+                                {# End Star Rating #}
+
+                                {% if movie.year %}
+                                    <span class="text-muted">({{ movie.year }})</span>
+                                {% endif %}
+
+                                {% if movie.director %}
+                                    <small class="text-secondary d-block">Directed by {{ movie.director }}</small>
+                                {% endif %}
+                            {% else %}
+                                {{ movie }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# ACTION BUTTON FORM: Separate from content, flex-shrink: 0 ensures it doesn't compress #}
+                    <form method="POST" action="{{ url_for('add_ai_movie') }}" class="add-ai-movie-form flex-shrink-0">
+                        <input type="hidden" name="user_id" value="{{ current_user.id if current_user else users[0].id }}" class="user-id-input">
+                        <input type="hidden" name="movie_name" value="{{ movie.title }}">
+                        <input type="hidden" name="director" value="{{ movie.director }}">
+                        <input type="hidden" name="year" value="{{ movie.year }}">
+                        <input type="hidden" name="rating" value="{{ movie.rating }}">
+
+                        {# 💡 CRITICAL FIX ADDITION #}
+                        <input type="hidden" name="poster_url" value="{{ movie.poster_url }}">
+
+                        <button type="submit" class="btn btn-sm btn-success add-ai-btn">
+                            <i class="bi bi-plus-circle"></i> Add to List
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif query %}
+        <div class="alert alert-warning mt-3">
+            ❌ No AI suggestions found. Try a different movie or topic.
+        </div>
+    {% endif %}
+
+    <hr class="my-4">
+    <p class="text-muted small">
+        💡 Powered by <strong>Google Gemini</strong> — delivering AI-driven movie recommendations.
+    </p>
+
+    <div class="mb-5"></div>
+</div>
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+{% endblock %}
+{% endblock %}

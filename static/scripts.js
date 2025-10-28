@@ -55,4 +55,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // -----------------------------
+    // AI Movie Suggestions Handling
+    // -----------------------------
+    const userSelect = document.getElementById('target_user');
+    const userIdInputs = document.querySelectorAll('.user-id-input');
+
+    const searchForm = document.getElementById('ai-search-form');
+    const searchButton = document.getElementById('search-button');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    // Function to update hidden user_id input in all forms
+    function updateForms() {
+        const selectedUserId = userSelect ? userSelect.value : null;
+        if (selectedUserId) {
+            userIdInputs.forEach(input => {
+                input.value = selectedUserId;
+            });
+        }
+    }
+
+    // Initialize User Select for AI Suggestions
+    if (userSelect) {
+        updateForms();
+        userSelect.addEventListener('change', updateForms);
+    }
+
+    // Show loading spinner on AI Suggestions form submit
+    if (searchForm && searchButton && loadingIndicator) {
+        searchForm.addEventListener('submit', () => {
+            searchButton.disabled = true;
+            searchButton.innerHTML = '<i class="bi bi-search"></i> Searching...';
+            loadingIndicator.style.display = 'block';
+        });
+    }
+
 });
