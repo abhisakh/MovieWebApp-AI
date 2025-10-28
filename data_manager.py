@@ -32,7 +32,7 @@ class DataManager:
         return user
 
     def get_users(self) -> list[User]:
-        """Return a list of all users."""
+        """Return a list of all users. (Filter methods like .all() are fine)"""
         return User.query.all()
 
     # -------------------------
@@ -181,7 +181,8 @@ class DataManager:
     # -------------------------
     def update_movie(self, movie_id: int, **kwargs) -> Movie | None:
         """Update movie fields dynamically."""
-        movie = Movie.query.get(movie_id)
+        # ⚠️ FIX APPLIED: Replaced Movie.query.get(movie_id) with db.session.get()
+        movie = db.session.get(Movie, movie_id)
         if not movie:
             return None
         for key, value in kwargs.items():
@@ -192,7 +193,8 @@ class DataManager:
 
     def delete_movie(self, movie_id: int) -> bool:
         """Delete a movie by ID. Returns True if successful."""
-        movie = Movie.query.get(movie_id)
+        # ⚠️ FIX APPLIED: Replaced Movie.query.get(movie_id) with db.session.get()
+        movie = db.session.get(Movie, movie_id)
         if movie:
             db.session.delete(movie)
             db.session.commit()

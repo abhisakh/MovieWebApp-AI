@@ -18,6 +18,8 @@ from flask import (
     Flask, render_template, request, redirect, url_for, flash
 )
 import requests
+from ai_movie_navigator import get_ai_movie_suggestions
+
 
 # -----------------------------
 # FLEXIBLE IMPORTS
@@ -53,6 +55,10 @@ logging.basicConfig(
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(16)
 
+# === 🚀 FIX FOR LONG QUERY POST REQUESTS ===
+# Sets the max content length for POST data to 5 Megabytes.
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+# ===========================================
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "movies.db"
@@ -310,16 +316,40 @@ def internal_server_error(e):
 # -----------------------------
 @app.context_processor
 def inject_globals():
-    """Inject common variables into all templates."""
+    """Inject common variables (current_year, users, current_user) into all templates."""
+
+    # 1. Load all users (required for the sidebar on all pages)
     try:
-        users = data_manager.get_users()
+        all_users = data_manager.get_users()
     except Exception as e:
         logging.error(f"Failed to load users for context processor: {e}")
-        users = []
+        all_users = []
+
+    # 2. Determine the current user object for sidebar highlighting
+    current_user_id = None
+    current_user = None
+
+    # Safely try to extract 'user_id' from the URL arguments
+    # This ensures 'current_user' is set when viewing a user's movie list
+    try:
+        # Check URL route arguments for 'user_id'
+        user_id_str = request.view_args.get('user_id')
+        if user_id_str:
+            current_user_id = int(user_id_str)
+
+            # Find the user object in the list
+            current_user = next(
+                (u for u in all_users if u.id == current_user_id),
+                None
+            )
+    except (TypeError, ValueError, AttributeError):
+        # Ignore if there's no view_args or user_id is missing/invalid
+        pass
 
     return {
         "current_year": datetime.now().year,
-        "users": users
+        "users": all_users,
+        "current_user": current_user  # <-- NEW: Injects the user object for sidebar
     }
 
 
@@ -378,6 +408,185 @@ def contact():
 
 
 # -----------------------------
+# AI ROUTE
+# -----------------------------
+# In your app.py, add this function somewhere before the ai_suggest route
+
+def fetch_omdb_details(title, year=None):
+    """Fetches full movie details (Poster, Rating, Year) from OMDb."""
+    # OMDB_API_KEY is already loaded globally at the top of app.py
+    if not OMDB_API_KEY:
+        return None
+
+    params = {'apikey': OMDB_API_KEY, 't': title, 'type': 'movie'}
+    if year and year != 0:
+        params['y'] = year
+
+    try:
+        response = requests.get('http://www.omdbapi.com/', params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get('Response') == 'True':
+            # Safely extract and format the required data
+            poster = data.get('Poster') if data.get('Poster') != 'N/A' else url_for('static', filename='placeholder.jpg')
+            rating_str = data.get('imdbRating', '0.0')
+
+            try:
+                # Convert IMDb rating (out of 10) to a float
+                # We also handle the case where OMDb returns a rating like 7.5/10 by keeping only 7.5
+                if '/' in rating_str:
+                    rating_str = rating_str.split('/')[0]
+                rating = float(rating_str)
+            except ValueError:
+                rating = 0.0
+
+            return {
+                "title": data.get('Title'),
+                "year": int(data.get('Year', 0)),
+                "director": data.get('Director', 'N/A'),
+                "poster_url": poster,
+                "rating": rating
+            }
+
+    except requests.RequestException as e:
+        logging.error(f"OMDb API network error for '{title}': {e}")
+    except Exception as e:
+        logging.error(f"Error processing OMDb response for '{title}': {e}")
+
+    return None
+
+
+# -----------------------------
+# AI ROUTE (MODIFIED)
+# -----------------------------
+@app.route("/add_ai_movie", methods=["POST"])
+def add_ai_movie():
+    """Adds a movie suggestion to the specified user's list."""
+    user_id_str = request.form.get("user_id")
+    movie_name = request.form.get("movie_name", "").strip()
+    director = request.form.get("director", "").strip()
+    year_str = request.form.get("year", "").strip()
+    rating_str = request.form.get("rating", "").strip()
+    # 💡 ADDED LINE: Extract the poster_url from the submitted form data
+    poster_url = request.form.get("poster_url", "").strip()
+
+    try:
+        if not user_id_str or not user_id_str.isdigit():
+            flash("❌ Invalid user selected.", "error")
+            return redirect(url_for("ai_suggest"))
+
+        user_id = int(user_id_str)
+
+        # Check if movie already exists for this user
+        existing = Movie.query.filter(
+            Movie.user_id == user_id,
+            Movie.name.ilike(movie_name)
+        ).first()
+
+        if existing:
+            flash(f"⚠️ Movie '{movie_name}' is already on this user's list.", "info")
+            return redirect(url_for("user_movies", user_id=user_id))
+
+        # Prepare data
+        year_val = int(year_str) if year_str and year_str.isdigit() else 0
+        rating_val = float(rating_str) if rating_str else 0.0
+
+        # Create the new movie entry
+        new_movie = Movie(
+            name=movie_name,
+            director=director or "Unknown",
+            year=year_val,
+            rating=rating_val,
+            # 💡 CORRECTED LINE: Use the poster_url from the form
+            poster_url=poster_url,
+            user_id=user_id
+        )
+
+        db.session.add(new_movie)
+        db.session.commit()
+
+        # FIX APPLIED for LegacyAPIWarning
+        user_for_flash = db.session.get(User, user_id)
+
+        flash(f"✅ Movie '{movie_name}' added to {user_for_flash.name}'s list!", "success")
+        return redirect(url_for("user_movies", user_id=user_id))
+
+    except Exception as e:
+        logging.error(f"Failed to add AI suggested movie: {e}")
+        flash("❌ Failed to add movie to list.", "error")
+        return redirect(url_for("ai_suggest"))
+
+
+@app.route("/ai_suggest", methods=["GET", "POST"])
+def ai_suggest():
+    """
+    AI-powered movie suggestions using Gemini, enriched with OMDb data.
+    """
+    suggestions = []
+    enriched_suggestions = [] # List to hold fully detailed movies
+    query = ""
+    model_name = "Unknown"
+
+    if request.method == "POST":
+        query = request.form.get("movie_query", "").strip()
+        if not query:
+            flash("⚠️ Please enter a movie name or topic for suggestions.", "warning")
+        else:
+            try:
+                # 1. GET RAW SUGGESTIONS (Title, Year, Director) FROM GEMINI
+                result = get_ai_movie_suggestions(query)
+                if isinstance(result, tuple):
+                    raw_suggestions, model_name = result
+                else:
+                    raw_suggestions = result
+                    model_name = "gemini-2.5-flash" # Default if not returned
+
+                if not raw_suggestions:
+                    flash("❌ Gemini returned no suggestions.", "error")
+
+                # 2. ENRICH EACH SUGGESTION WITH OMDB DETAILS
+                for movie_data in raw_suggestions:
+                    title = movie_data.get('title')
+                    year = movie_data.get('year')
+
+                    if title:
+                        omdb_details = fetch_omdb_details(title, year)
+
+                        if omdb_details:
+                            # Use OMDb data, but prioritize Gemini's director if OMDb returned 'N/A'
+                            final_movie_details = {
+                                "title": omdb_details['title'],
+                                "director": omdb_details['director'] if omdb_details['director'] != 'N/A' else movie_data.get('director', 'Unknown'),
+                                "year": omdb_details['year'],
+                                "rating": omdb_details['rating'],
+                                "poster_url": omdb_details['poster_url'],
+                            }
+                            enriched_suggestions.append(final_movie_details)
+                        else:
+                            # If OMDb fails, keep Gemini's minimal data (better than nothing)
+                            enriched_suggestions.append(movie_data)
+
+                if not enriched_suggestions:
+                    flash("❌ Failed to find any detailed movie suggestions. Try a different query.", "error")
+
+            except Exception as e:
+                logging.error(f"AI suggestion error: {e}")
+                flash("❌ Failed to communicate with the AI model or OMDb.", "error")
+
+    users = data_manager.get_users()
+
+    # Pass the enriched list to the template
+    return render_template(
+        "ai_suggestions.html",
+        query=query,
+        suggestions=enriched_suggestions,
+        model_name=model_name,
+        users=users
+    )
+
+
+# -----------------------------
 # ENTRY POINT
 # -----------------------------
 if __name__ == "__main__":
@@ -389,4 +598,3 @@ if __name__ == "__main__":
     # Only run the dev server if not on PythonAnywhere
     if os.environ.get("PYTHONANYWHERE_SITE") is None:
         app.run(host="0.0.0.0", port=5001, debug=True)
-

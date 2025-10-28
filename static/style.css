@@ -13,12 +13,14 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  /* Dark Cinematic Background */
   background: radial-gradient(circle at top left, #1c1c1c, #0d0d0d);
   color: #e0e0e0;
   overflow-x: hidden;
 }
 
 body::before {
+  /* Subtle grain/overlay effect */
   content: "";
   position: fixed;
   top: 0; left: 0;
@@ -28,6 +30,7 @@ body::before {
   mix-blend-mode: overlay;
   z-index: -1;
 }
+
 /* =========================================================
 🏠 Back to Home Button
 ========================================================= */
@@ -40,7 +43,7 @@ body::before {
     display: inline-block;
     padding: 0.4rem 0.8rem;
     background-color: #4CAF50; /* nice green */
-    color: rgb(41, 29, 209);
+    color: #fff; /* Ensure text is visible */
     text-decoration: none;
     border-radius: 4px;
     font-weight: bold;
@@ -49,10 +52,11 @@ body::before {
 
 .back-home-btn:hover {
     background-color: #45a049;
+    color: #fff;
 }
 
 /* =========================================================
-🎬 HEADER — Neon Cinema Title Bar with Spinning Reels
+🎬 HEADER — Neon Cinema Title Bar
 ========================================================= */
 header {
   display: flex;
@@ -148,7 +152,7 @@ header h1 .title-text::after {
 }
 
 /* =========================================================
-🧭 NAV BAR — Neon Links with Glowing Vertical Separators
+🧭 NAV BAR — Neon Links
 ========================================================= */
 .nav-bar {
   display: flex;
@@ -170,7 +174,7 @@ header h1 .title-text::after {
 
 .nav-bar ul li {
   position: relative;
-  padding: 0 1rem; /* horizontal spacing */
+  padding: 0 1rem;
 }
 
 .nav-bar ul li + li::before {
@@ -201,6 +205,11 @@ header h1 .title-text::after {
   text-shadow: 0 0 12px #00e5ff, 0 0 20px rgba(0, 229, 255, 0.5);
 }
 
+nav ul li.active a {
+    font-weight: bold;
+    color: #ff9900;
+}
+
 /* =========================================================
  ⚡ FLASH MESSEGEs
 ========================================================= */
@@ -208,7 +217,7 @@ header h1 .title-text::after {
   width: 80%;
   max-width: 700px;
   position: fixed;
-  top: 80px; /* just below the header */
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -316,7 +325,7 @@ aside ul li a {
   color: #e0e0e0;
   letter-spacing: 0.3px;
   margin-bottom: 0.6rem;
-  box-shadow: 0 0 10px rgba(255, 193, 7, 0.25); /* glowing gold margin illusion */
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.25);
   transition: all 0.3s ease;
 }
 
@@ -482,7 +491,7 @@ main ul.user-list li small {
 }
 
 /* =========================================================
-🧾 FORMS
+🧾 FORMS (General & INPUTS - INCREASED SIZE)
 ========================================================= */
 form {
   margin-top: 1rem;
@@ -493,9 +502,10 @@ form {
 
 input[type="text"],
 input[type="number"],
-button {
-  padding: 0.6rem;
-  font-size: 1rem;
+.form-select,
+textarea {
+  padding: 0.75rem; /* Increased padding */
+  font-size: 1.1rem; /* Increased font size */
   border-radius: 8px;
   border: 1px solid #333;
   background: #1a1a1a;
@@ -504,15 +514,19 @@ button {
 }
 
 input[type="text"]:focus,
-input[type="number"]:focus {
+input[type="number"]:focus,
+textarea:focus {
   border-color: #ffb300;
   box-shadow: 0 0 10px rgba(255, 179, 0, 0.6);
   outline: none;
 }
 
 button {
+  padding: 0.75rem;
+  font-size: 1.1rem;
   background: linear-gradient(135deg, #512da8, #673ab7);
   border: none;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
@@ -520,7 +534,7 @@ button {
 
 button:hover {
   background: linear-gradient(135deg, #7e57c2, #9575cd);
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 /* =========================================================
@@ -555,7 +569,7 @@ button:hover {
 /* When toggled open */
 .collapsible-form.open,
 .collapsible-update-form.open {
-  max-height: 400px; /* Adjust as needed */
+  max-height: 400px;
   opacity: 1;
   margin-top: 0.5rem;
 }
@@ -608,6 +622,11 @@ button:hover {
   animation: star-glow 1.2s ease-in-out;
 }
 
+.star-empty {
+    color: #555; /* Dim color for empty stars */
+    text-shadow: none;
+}
+
 @keyframes star-glow {
   0% { text-shadow: 0 0 0 #ffeb3b; transform: scale(0.8); }
   100% { text-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff9800; transform: scale(1); }
@@ -656,43 +675,594 @@ footer::before {
     font-size: 2.2rem;
   }
 }
+
 /* =========================================================
-📱 ABOUT
+📱 ABOUT & CONTACT
 ========================================================= */
 
-.about-section, .contact-section {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+/* Common container for About and Contact sections */
+.about-section,
+.contact-section {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 2rem;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* =========================================================
-📱 CONTACT
-========================================================= */
-
-.contact-form div {
+/* Headings */
+.about-section h1,
+.about-section h2,
+.contact-section h2 {
+    color: #ffcc00;
     margin-bottom: 1rem;
+    text-align: center;
 }
 
+.about-section h3 {
+    color: #ffd700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Paragraphs */
+.about-section p,
+.contact-section p {
+    line-height: 1.7;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+}
+
+/* Lists */
+.about-section ul {
+    list-style: disc inside;
+    margin-left: 1rem;
+}
+
+.about-section ul li {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Cards for features */
+.about-section .card {
+    background: #2b2b2b;
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #fff;
+}
+
+.about-section .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* Contact Form */
 .contact-form input,
 .contact-form textarea {
     width: 100%;
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #444;
+    background: #1a1a1a;
+    color: #fff;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
 }
 
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 10px rgba(255,204,0,0.5);
+    outline: none;
+}
+
+/* Submit button */
 .contact-form button {
-    background-color: #4CAF50;
-    color: #EDF512;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
+    background-color: #ffcc00;
+    color: #1a1a1a;
     font-weight: bold;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .contact-form button:hover {
-    background-color: #45a049;
+    background-color: #ffd633;
+    transform: translateY(-2px);
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .about-section,
+    .contact-section {
+        padding: 1.5rem;
+    }
+
+    .about-section .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* =========================================================
+💡 AI SUGGESTIONS LIST
+========================================================= */
+
+/* Main List Container */
+.list-group {
+    list-style: none;
+    margin-top: 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Individual Suggestion Item */
+.list-group-item {
+    background: linear-gradient(145deg, #1c1c1c, #292929);
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #fefefe;
+    letter-spacing: 0.6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: all 0.35s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+    /* 🛠️ FIX 3: Ensure the button stays on the same line as content */
+    flex-wrap: nowrap !important;
+}
+
+/* Hover Effect for suggestions */
+.list-group-item:hover {
+    background: linear-gradient(90deg, #2a2a2a, #333);
+    border-color: #00e5ff;
+    color: #00e5ff;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+}
+
+/* Movie Poster inside the list item */
+.suggestion-poster { /* Added class for clarity and specificity */
+    width: 250px !important;
+    height: 375px !important;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid rgba(255, 179, 0, 0.8);
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.5);
+}
+
+/* =========================================================
+💡 AI QUERY SUGGESTION TAGS (No changes needed, these look fine)
+========================================================= */
+.suggestion-tag {
+    font-size: 1rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    background: rgba(0, 229, 255, 0.1);
+    color: #00e5ff;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-tag:hover {
+    background: rgba(0, 229, 255, 0.2);
+}
+
+/* =========================================================
+✨ AI SUGGESTION ADD BUTTON (Final size lock)
+========================================================= */
+
+/* Target the Action Button Form Container (The fix for size stretching) */
+.add-ai-movie-form {
+    /* Set a standard, fixed width for the container holding the button. */
+    width: 150px !important; /* Locks the button container width */
+    flex-shrink: 0 !important; /* Must not shrink */
+    flex-grow: 0 !important;  /* Must not grow */
+}
+
+.add-ai-btn {
+    /* Ensure the button itself uses the full fixed width */
+    width: 100% !important;
+    white-space: nowrap; /* Prevents button text from wrapping onto a new line */
+
+    /* Base Button Styling (Merged) */
+    padding: 0.75rem 1.3rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    /* Neon Green Theme */
+    background: linear-gradient(135deg, #00e676, #00c853);
+    color: #000;
+    border: 2px solid #00e676;
+    box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+}
+
+.add-ai-btn:hover {
+    /* Brighter hover effect */
+    background: linear-gradient(135deg, #00ff88, #00e676);
+    color: #fff;
+    border-color: #00ff88;
+    box-shadow: 0 0 20px #00ff88, 0 0 40px rgba(0, 255, 136, 0.6);
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+✅ CORRECTED AI PAGE LAYOUT & INPUT STYLING (Final fixes for input and search button)
+========================================================= */
+
+/* 1. WIDER CONTAINER (Maximized Area) */
+.ai-search-area {
+    max-width: 1700px !important;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-top: 2rem !important;
+    padding-bottom: 4rem !important;
+}
+
+/* 2. ENSURE FORM AND INPUT GROUP USE FULL WIDTH */
+.ai-search-area form,
+.ai-search-area .input-group {
+    width: 100%;
+}
+
+/* 3. AGGRESSIVE INPUT WIDTH & SPACING OVERRIDE */
+.ai-search-area .input-group .form-control {
+    /* Input MUST take priority in width */
+    flex-grow: 100;
+    flex-shrink: 1;
+    flex-basis: 0;
+
+    /* 🚀 CRITICAL FIX: Ensure 100% width within the Flex item's allocated space */
+    width: 100% !important;
+    min-width: 0 !important;
+
+    /* === CREATE SPACE (GAP) TO THE BUTTON === */
+    margin-right: 0.75rem !important;
+
+    /* Restore rounded corners where margin broke the input-group look */
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* 4. BUTTON STYLING (Small and Aligned) */
+.input-group .btn-primary {
+    /* 🛠️ FIX 1: Prevent the button from being pushed to the next line or wrapping */
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    min-width: 140px; /* Set a minimum width to stabilize the size */
+    white-space: nowrap; /* Prevent button text from wrapping */
+
+    /* Ensure the button's corners are also rounded */
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+
+    /* Your desired minimal padding */
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    font-size: 1rem;
+    height: 100%;
+}
+/* =========================================================
+✅ LOADING ANIMATION for AI
+========================================================= */
+
+/* The hidden element that performs the spinning animation */
+.loading-spinner {
+    /* Hidden by default until JavaScript shows it */
+    display: none;
+
+    /* Creates the circle shape */
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    /* Blue/Primary Color for the moving part */
+    border-left-color: #00e5ff;
+    border-radius: 50%;
+
+    /* Size */
+    width: 24px;
+    height: 24px;
+
+    /* Spacing relative to the button */
+    margin-left: 10px;
+
+    /* The animation itself */
+    animation: spin 1s linear infinite;
+    flex-shrink: 0; /* Ensures it doesn't get squeezed by the flex container */
+}
+
+/* Defines the rotation animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+/* =========================================================
+🎥 ENHANCED AI SUGGESTIONS PAGE — Cinematic Neon Console
+========================================================= */
+
+/* 🔹 Search Bar Glow */
+.ai-search-area .input-group .form-control {
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #00e5ff;
+  color: #e0f7fa;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.ai-search-area .input-group .form-control:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  outline: none;
+}
+
+/* 🔹 Search Button Neon Effect */
+.btn-primary {
+  background: linear-gradient(135deg, #00bcd4, #2196f3);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #00e5ff, #00bcd4);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.7);
+  transform: scale(1.05);
+}
+
+/* 🔹 Suggestion List as Modern Movie Cards */
+.list-group-item {
+  display: flex;
+  align-items: flex-start;
+  background: linear-gradient(145deg, #111, #1e1e1e);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  gap: 1.5rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+  transition: all 0.4s ease;
+}
+
+.list-group-item:hover {
+  background: linear-gradient(145deg, #1c1c1c, #292929);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+  transform: translateY(-4px);
+}
+
+/* 🔹 Movie Poster Fix (Responsive) */
+.suggestion-poster {
+  width: 180px;
+  height: 270px;
+  border: 2px solid #00e5ff;
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.suggestion-poster:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+}
+
+/* 🔹 Title + Info Layout */
+.list-group-item div {
+  flex: 1;
+}
+
+.list-group-item strong.fs-5 {
+  color: #ffeb3b;
+  text-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
+}
+
+/* 🔹 Star Ratings — More cinematic glow */
+.star {
+  color: #ffd600;
+  text-shadow: 0 0 10px #ffeb3b, 0 0 25px #ff9800;
+  font-size: 1.1rem;
+}
+
+.star-empty {
+  color: #444;
+}
+
+/* 🔹 Add Movie Button — glowing green */
+.add-ai-btn {
+  background: linear-gradient(135deg, #00e676, #00c853);
+  border: 2px solid #00ff88;
+  color: #000;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.add-ai-btn:hover {
+  background: linear-gradient(135deg, #00ff9d, #00e676);
+  color: #fff;
+  transform: scale(1.07);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+}
+
+/* 🔹 Suggestion Tags — Sleeker Style */
+.suggestion-tag {
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  color: #00e5ff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.suggestion-tag:hover {
+  background: rgba(0, 229, 255, 0.3);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* 🔹 Loading Spinner — better centering and size */
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #00e5ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 12px;
+}
+
+/* 🔹 Small model name text */
+.text-muted.small {
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* 🔹 Responsive Tuning */
+@media (max-width: 768px) {
+  .list-group-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .suggestion-poster {
+    width: 200px;
+    height: 300px;
+  }
+
+  .add-ai-movie-form {
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+  }
+
+  .add-ai-btn {
+    width: 80%;
+  }
+}
+/* =========================================================
+🎨 FIX: Vertical Spacing & Line-Height Improvements
+========================================================= */
+
+/* Increase global line height slightly for better readability */
+body {
+  line-height: 1.7;
+}
+
+/* Title + subtitles spacing */
+.list-group-item strong.fs-5 {
+  display: block;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* Year, director, rating area spacing */
+.list-group-item span.text-muted,
+.list-group-item small.text-secondary {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* Extra breathing room between list items */
+.list-group-item + .list-group-item {
+  margin-top: 1rem;
+}
+
+/* Slightly larger spacing inside the movie content wrapper */
+.list-group-item div {
+  line-height: 1.6;
+}
+
+/* Increase spacing between the rating stars and text */
+.star,
+.star-empty {
+  margin-right: 2px;
+}
+
+.list-group-item small.text-muted {
+  margin-left: 6px;
+}
+
+/* Add spacing between AI search elements */
+.ai-search-area h2 {
+  margin-bottom: 1rem;
+}
+
+.ai-search-area form {
+  margin-bottom: 2rem;
+}
+
+/* Better spacing between example query tags */
+.suggestion-tag {
+  margin-bottom: 0.5rem;
+}
+
+/* User selector and list margin tweak */
+#target_user {
+  margin-left: 0.5rem;
+}
+
+/* Bottom padding for the results section */
+.container.ai-search-area {
+  padding-bottom: 3rem;
+}
+/* =========================================================
+🎯 FIX: Spacing between AI search form and results
+========================================================= */
+
+/* Add breathing room below the AI search form */
+#ai-search-form {
+  margin-bottom: 2.5rem !important;
+}
+
+/* Add extra space below the search button area */
+#ai-search-form .input-group {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Ensure the loading spinner doesn't collapse spacing */
+#loading-indicator {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* When results start, push them slightly down */
+.ai-search-area h5,
+.ai-search-area p.text-muted {
+  margin-top: 1.5rem;
+}
+
+/* Add spacing between example query tags and the results heading */
+.ai-search-area .text-muted.small {
+  margin-bottom: 1.5rem;
+}
+
