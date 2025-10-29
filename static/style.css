@@ -792,7 +792,49 @@ footer::before {
         margin-bottom: 1rem;
     }
 }
+/* =========================================================
+    ABOUT PAGE - Welcome Image
+   ========================================================= */
+.about-section .row img {
+    /* Ensure the image doesn't exceed the width of its parent container */
+    max-width: 100%;
+    /* Maintain aspect ratio */
+    height: auto;
+    /* Optional: Ensure consistent top/bottom margin if needed */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
 
+/* If the .img-fluid is not enough or is being overridden,
+   we can be more specific, but the above should be sufficient. */
+.about-section .row .col-md-6 img.img-fluid {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Removes any extra space below the image */
+}
+
+/* You might also want to control the max height for very tall images,
+   but generally, max-width: 100% is enough to keep it in its box. */
+/* If the image is still too dominant, you could add: */
+.about-section .row img {
+    max-height: 400px; /* Adjust this value as needed */
+    object-fit: contain; /* or 'cover' depending on desired cropping/scaling */
+    width: 100%; /* Important when max-height is set to ensure it fills the width */
+}
+/* =========================================================
+   ABOUT PAGE - Lead Text Centering Fix
+   ========================================================= */
+
+/* Target the specific lead paragraph in the about section's header */
+.about-section .text-center p.lead {
+    text-align: center !important;
+    /* You may also want to limit the width of the lead text
+       to prevent it from spanning the full page width, which often
+       makes it appear left-aligned even when centered. */
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
 /* =========================================================
 💡 AI SUGGESTIONS LIST
 ========================================================= */
