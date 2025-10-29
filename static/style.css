@@ -1266,3 +1266,21 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* =========================================================
+🎬 FIX: Collapsible Add Movie Form Pushes Content Down
+========================================================= */
+#addMovieForm {
+    position: relative;   /* stay in normal flow */
+    max-height: 0;        /* collapsed by default */
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.4s ease;
+    margin-top: 1rem;
+    z-index: 1;           /* no need for high z-index */
+}
+
+#addMovieForm.open {
+    max-height: 800px;    /* large enough to show the form fully */
+    opacity: 1;
+}
+
