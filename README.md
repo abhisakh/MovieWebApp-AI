@@ -1,5 +1,5 @@
 # 🎬 MovieWebApp
-<img width="1692" height="1079" alt="Screenshot 2025-10-27 at 20 46 14" src="https://github.com/user-attachments/assets/56786563-4c71-4c9e-be31-47cc620fd44a" />
+<img width="1704" height="1069" alt="Screenshot 2025-10-29 at 00 50 25" src="https://github.com/user-attachments/assets/0ae4f3ff-7450-4eb1-9b49-4f8385e5812b" />
 
 MovieWebApp is a Flask-based web application that allows users to create personal movie collections.
 Users can add, update, and delete movies, fetch details from the OMDb API, and track ratings.
