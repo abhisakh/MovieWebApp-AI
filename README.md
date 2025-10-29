@@ -10,49 +10,63 @@ Users can add, update, and delete movies, fetch details from the OMDb API, and t
 
 - ✅ User management: add multiple users
 -  👥 User Profiles       | Each user has a personalized movie collection.
-  <img width="1692" height="1079" alt="Screenshot 2025-10-27 at 20 47 44" src="https://github.com/user-attachments/assets/23f1f1d3-7fb9-4dd5-a8a0-2c04c7dc1e13" />
+  <img width="1704" height="1069" alt="Screenshot 2025-10-29 at 01 08 11" src="https://github.com/user-attachments/assets/06bcea27-fa29-4528-aca0-692db65babda" />
 
 - � Add Movies            | Add movies via a form; details fetched automatically from OMDb API.
 - ✏️ Rename Movies        | Rename movies directly from the movie grid using a collapsible form.
 - 🗑 Delete Movies        | Remove movies from your collection.
-  <img width="1692" height="1079" alt="Screenshot 2025-10-27 at 20 48 16" src="https://github.com/user-attachments/assets/b401e983-055a-4d9b-8ac1-78dd9f1df55c" />
+  <img width="1704" height="1069" alt="Screenshot 2025-10-29 at 01 06 28" src="https://github.com/user-attachments/assets/86e347fa-9c23-4968-89b7-8c3c40b89e50" />
+
 
 - ✅ OMDb API integration for automatic movie details
 - ✅ Collapsible forms for a clean UI
 - ✅ Star ratings and poster display
 - <img width="964" height="721" alt="Screenshot 2025-10-27 at 20 53 36" src="https://github.com/user-attachments/assets/e5759138-c744-40d8-abe9-6692e29f118f" />
-- ✅ Contact form integrated with GitHub Issues
+- ✅ Contact form integrated with GitHub Issues. I will receive your messeges, and will try to address them.
 <img width="1399" height="880" alt="Screenshot 2025-10-27 at 20 55 10" src="https://github.com/user-attachments/assets/a2079511-79b5-4aa3-bb9c-53d4d45d4450" />
 
+- ✅AI-Powered Suggestions
+  <img width="1704" height="1069" alt="Screenshot 2025-10-29 at 01 13 34" src="https://github.com/user-attachments/assets/72956fcd-0af9-4062-8924-9697ff3ba8e9" />
+
+- Get movie recommendations from AI using **Gemini-2.5-Flash**
+- Example queries: 
+  - "Best sci-fi movies of the last 5 years"  
+  - "Movies directed by Christopher Nolan"  
+  - "Underrated horror films from the 90s"  
+  - "What to watch after Dune"
+  - Feel free to formulate the question
+<img width="1704" height="1069" alt="Screenshot 2025-10-29 at 01 13 49" src="https://github.com/user-attachments/assets/06b396bb-e54e-4da8-903e-fa9fd0141ef1" />
 
 
 ---
 ## 🗂 Project Structure
 
 ```bash
-.
 ├── LICENSE
 ├── README.md
 ├── __init__.py
-├── app.py                     # Main Flask app
-├── app_errors.log             # Log file for errors
+├── ai_movie_navigator.py        # AI movie helper/navigation script
+├── app.py                       # Main Flask app
+├── app_errors.log               # Log file for errors
 ├── data
-│   └── movies.db              # SQLite database
-├── data_manager.py            # Handles database operations
-├── models.py                  # SQLAlchemy models
-├── requirements.txt           # Python dependencies
+│   └── movies.db                # SQLite database
+├── data_manager.py              # Handles database operations
+├── models.py                    # SQLAlchemy models
+├── requirements.txt             # Python dependencies
 ├── sqlalchemy_orm_documentation.md  # ORM reference docs
 ├── static
-│   ├── scripts.js             # JavaScript for UI interactions
-│   └── style.css              # Application styling
+│   ├── scripts.js               # JavaScript for UI interactions
+│   └── style.css                # Application styling (includes fixes for forms & UI)
 └── templates
-    ├── 404.html               # 404 error page
-    ├── 500.html               # 500 error page
-    ├── about.html             # About page
-    ├── base.html              # Base template for pages
-    ├── contact.html           # Contact page
-    ├── index.html             # Homepage
-    └── movies.html            # Movies management page
+    ├── 404.html                 # 404 error page
+    ├── 500.html                 # 500 error page
+    ├── about.html               # About page
+    ├── ai_suggestions.html      # AI-powered suggestions page
+    ├── app_errors.log           # (possibly misplaced, consider moving to root)
+    ├── base.html                # Base template
+    ├── contact.html             # Contact page
+    ├── index.html               # Homepage
+    └── movies.html              # Movies management page
 
 ```
 
@@ -107,62 +121,87 @@ Listed in requirements.txt:
 Flask==3.1.2
 Werkzeug==3.1.3
 Jinja2==3.1.6
+Flask-Cors==3.1.3          # if using CORS in your app
 
 # Database and migrations
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==4.1.0
-SQLAlchemy==2.0.43
+SQLAlchemy==2.0.44         # updated minor version
 
 # Environment variables
 python-dotenv==1.1.1
 
-# HTTP requests (for OMDb API)
+# HTTP requests and API calls
 requests==2.32.4
+httpx==0.24.1               # for async HTTP calls if AI module uses it
+urllib3==2.5.0
+grpcio==1.76.0              # if using Google APIs
+grpcio-status==1.71.2
+google-auth==2.23.3
+google-api-core==2.11.0
+google-ai-generativelanguage==0.4.0
+proto-plus==1.26.1
+protobuf==4.24.1
+
+# AI module dependencies
+pydantic==2.7.3
+pydantic-core==2.13.1
+tenacity==9.1.2
+
+# Utility / supporting packages
+typing-extensions==4.15.0
+typing-inspection==0.4.2
+cachetools==6.2.1
+blinker==1.6.2
+greenlet==3.2.4
+Mako==1.3.10
+rsa==4.9.1
+pyasn1==0.6.1
+pyasn1-modules==0.4.2
+h11==0.16.0
+anyio==4.0.0
+websockets==15.0.1
 
 # Optional for deployment
 gunicorn==21.2.0
-flask-cors==6.0.1
+
 ```
 
 ---
 ## 💡 Detail diagram for each code block
 Our movie collection project is composed of several core code blocks, each with a distinct responsibility:
 
-- **Backend Flask App (app.py)** — The central Flask application that handles all routing, request processing,
-and page rendering. It connects the frontend with the database through data_manager.py and models.py.
+- **Backend Flask App (app.py)** — The central Flask application that handles routing, request processing, and page rendering. It connects the frontend with the database through data_manager.py and models.py.
 
-- **Database Manager (data_manager.py)** — Provides an abstraction layer for all database operations. Handles
-CRUD operations for movies in movies.db, and ensures data integrity and proper queries.
+- **AI Movie Navigator (ai_movie_navigator.py)** — Handles AI-assisted movie suggestions and queries using Google Generative AI or other AI APIs. Integrates with the main app to fetch recommendations and display them in ai_suggestions.html.
 
-- **Data Models (models.py)** — Defines SQLAlchemy models that represent movies and any related entities.
-These models dictate the structure and constraints of the database.
+- **Database Manager (data_manager.py)** — Provides an abstraction layer for all database operations. Handles CRUD operations for movies in movies.db, and ensures data integrity and proper queries.
 
-- **Templates (templates/*.html)** — HTML files defining the structure of pages:
+- **Data Models (models.py)** — Defines SQLAlchemy models representing movies and related entities. These models dictate the structure, relationships, and constraints of the database.
 
-- **base.html provides** a consistent layout and shared components.
+- **Templates (templates/*.html)** — HTML files defining page structures:
 
-- **index.html** serves as the homepage.
+- **base.html** — Provides a consistent layout and shared components (header, footer, nav bar).
 
-- **movies.html** allows users to view, add, update, or delete movies.
+- **index.html** — Homepage for general navigation.
 
-Other pages like about.html, contact.html, 404.html, and 500.html provide additional
-information and error handling.
+- **movies.html** — Allows users to view, add, update, or delete movies.
 
-- **Static Assets (static/scripts.js & static/style.css) —**
+- **ai_suggestions.html** — Displays AI-generated movie recommendations and search results.
 
-**scripts.js** contains frontend logic for dynamic behavior, such as collapsible menus
-or interactive UI elements.
+- **about.html / contact.html** — Provide additional information and contact forms.
 
-- **style.css** provides the styling for all HTML pages to ensure a consistent and user-friendly design.
+- **404.html / 500.html** — Handle error pages gracefully.
 
-- **Database (data/movies.db)** — SQLite database storing all movie data, including titles, ratings,
-personal notes, and other metadata fetched from the OMDb API.
+- **Static Assets (static/scripts.js & static/style.css)** —
 
-- **Requirements (requirements.txt)** — Lists all Python dependencies needed to run the application,
-including Flask, SQLAlchemy, and any additional libraries like requests or pandas.
+scripts.js contains frontend logic for collapsible menus, dynamic forms, and interactive UI elements.
 
-Below, we present detailed diagrams and explanations for each of these code blocks to provide
-a clearer understanding of their structure and interaction within the application.
+style.css provides styling for all HTML pages, ensuring a cinematic, user-friendly interface, including AI suggestions and movie grids.
+
+Database (data/movies.db) — SQLite database storing all movie data, including titles, directors, years, ratings, personal notes, and metadata fetched from the OMDb API.
+
+Requirements (**requirements.txt**) — Lists all Python dependencies needed to run the application, including Flask, SQLAlchemy, requests, and AI-related libraries for the new AI module.
 
 ---
 ## 🌐 🎬 app.py — Flask Application Setup Diagram
@@ -176,12 +215,12 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 
 ```Bash
 ┌────────────────────────────────────────────────────────────────────────────┐
-│ app.py — MovieWebApp Main Flask Application                                │
+│ app.py — MovieWebApp Main Flask Application (Updated)                      │
 ├────────────────────────────────────────────────────────────────────────────┤
 │ 🧭 Purpose:                                                                │
 │  - Initialize Flask, SQLAlchemy, and DataManager                           │
 │  - Configure database & environment variables                              │
-│  - Handle routes: users, movies, contact form, about page                  │
+│  - Handle routes: users, movies, AI suggestions, contact form, about page  │
 │  - Perform validation, logging, and error handling                         │
 │  - Delegate CRUD operations to DataManager and SQLAlchemy models           │
 ├────────────────────────────────────────────────────────────────────────────┤
@@ -192,6 +231,7 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │  │ app.secret_key → os.environ or secrets.token_hex()                 │    │
 │  │ SQLAlchemy initialized with SQLite database at data/movies.db      │    │
 │  │ Logging setup: errors written to app_errors.log                    │    │
+│  │ Max POST content length → 5MB                                      │    │
 │  └────────────────────────────────────────────────────────────────────┘    │
 │                                                                            │
 │ 🧩 Flexible Imports:                                                       │
@@ -206,7 +246,6 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │                                                                            │
 │ ["/users"] → add_user() [POST]                                             │
 │  • Add user with validation                                                │
-│  • Checks empty names, regex, duplicates                                   │
 │                                                                            │
 │ ["/users/<user_id>/movies"] → user_movies() [GET]                          │
 │  • Show movies for a user                                                  │
@@ -217,27 +256,35 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │  • Delegates OMDb fetch to DataManager                                     │
 │                                                                            │
 │ ["/users/<user_id>/movies/<movie_id>/update"] → update_movie() [POST]      │
-│  • Update movie details                                                    │
-│  • Validates input before updating                                         │
+│  • Update movie details with validation                                    │
 │                                                                            │
 │ ["/users/<user_id>/movies/<movie_id>/delete"] → delete_movie() [POST]      │
 │  • Deletes movie from DB                                                   │
 │                                                                            │
 │ ["/about"] → about() [GET]                                                 │
-│  • Serves about.html                                                       │
 │                                                                            │
 │ ["/contact"] → contact() [GET, POST]                                       │
 │  • Displays contact form / POSTs message to GitHub via API                 │
 │                                                                            │
+│ ["/ai_suggest"] → ai_suggest() [GET, POST]                                 │
+│  • AI-powered movie suggestions using Gemini                               │
+│  • Enriches suggestions with OMDb data                                     │
+│  • Returns list with title, director, year, rating, poster_url             │
+│                                                                            │
+│ ["/add_ai_movie"] → add_ai_movie() [POST]                                  │
+│  • Adds AI-suggested movie to user's list                                  │
+│  • Validates user, movie existence, and input fields                       │
+├────────────────────────────────────────────────────────────────────────────┤
 │ ⚠️ Error Handlers:                                                         │
 │  - 404 → page_not_found()                                                  │
 │  - 500 → internal_server_error()                                           │
-│  • Both render respective templates with flash messages                    │
+│  • Both render templates with flash messages                               │
 ├────────────────────────────────────────────────────────────────────────────┤
 │ 🧩 Context Processor                                                       │
 │  - inject_globals() adds:                                                  │
 │      • current_year → datetime.now().year                                  │
 │      • users → data_manager.get_users()                                    │
+│      • current_user → highlights user currently being viewed               │
 ├────────────────────────────────────────────────────────────────────────────┤
 │ 🔄 Data Flow Summary                                                       │
 │                                                                            │
@@ -247,7 +294,7 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │       ↓                                                                    │
 │ DataManager → db.session → Movie/User models → SQLite movies.db            │
 │       ↓ Response                                                           │
-│ app.py → render_template → index.html/movies.html/404.html/500.html        │
+│ app.py → render_template → index.html/movies.html/ai_suggestions.html/...  │
 │       ↓                                                                    │
 │ Browser → Displays updated DOM                                             │
 │                                                                            │
@@ -260,6 +307,60 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │  if __name__ == "__main__":                                                │
 │      db.create_all() → initialize SQLite DB                                │
 │      app.run(host="0.0.0.0", port=5001, debug=True)                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+```
+## 🧩 ai_movie_navigator.py— Project Structure Diagram
+```Bash
+┌────────────────────────────────────────────────────────────────────────────┐
+│ ai_movie_navigator.py — AI Movie Suggestions via Gemini API                │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🧭 Purpose:                                                                │
+│  - Provide structured movie recommendations using Gemini API               │
+│  - Return suggestions in JSON adhering to MovieSuggestionList schema       │
+│  - Handle errors, empty responses, and API connectivity issues             │
+├────────────────────────────────────────────────────────────────────────────┤
+│ ⚙️ Environment & Configurations                                            │
+│  - load_dotenv() → load GEMINI_API_KEY                                     │
+│  - client = genai.Client(api_key=GEMINI_API_KEY) if API key exists         │
+│  - Prints diagnostic message if API key is missing                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🧩 Data Models (Pydantic)                                                  │
+│  • MovieSuggestion:                                                        │
+│      - title: str                                                          │
+│      - year: int (0 if unknown)                                            │
+│      - director: str ('Unknown' if missing)                                │
+│                                                                            │
+│  • MovieSuggestionList:                                                    │
+│      - suggestions: list of 5 MovieSuggestion objects                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│ ⚡ Main Function: get_ai_movie_suggestions(query, max_suggestions=5)        │
+│                                                                            │
+│ 1️⃣ Validates API client and query                                          │
+│ 2️⃣ Constructs system_instruction & prompt for Gemini                       │
+│ 3️⃣ Configures GenerateContentConfig (response_schema=MovieSuggestionList)  │
+│ 4️⃣ Calls Gemini API: client.models.generate_content(...)                   │
+│ 5️⃣ Extracts JSON block from response.text                                  │
+│ 6️⃣ Parses JSON → suggestions list                                          │
+│ 7️⃣ Returns (suggestions, model_name)                                       │
+│                                                                            │
+│ 🔹 Error Handling:                                                         │
+│  - Empty response text → logs error & return ([], "Error")                 │
+│  - JSON parse failure → logs error & return ([], "Error")                  │
+│  - API/network exceptions → logs & prints diagnostic → return ([], "Error")│
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🧪 Test Block (Optional)                                                   │
+│  - Runs a sample query when executed as __main__                           │
+│  - Prints list of movie suggestion dicts with titles, years, directors     │
+├────────────────────────────────────────────────────────────────────────────┤
+│ 🔄 Data Flow Summary                                                       │
+│ [Flask app POST /ai_suggest] → query string                                │
+│       ↓                                                                    │
+│ ai_movie_navigator.get_ai_movie_suggestions(query)                         │
+│       ↓                                                                    │
+│ Gemini API → JSON response → parsed dict list                              │
+│       ↓                                                                    │
+│ Flask receives enriched suggestions → renders ai_suggestions.html          │
 └────────────────────────────────────────────────────────────────────────────┘
 
 ```
@@ -372,83 +473,87 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 +----------------------------------------+
 ```
 
+
 ## 🧩 base.html — Project Structure Diagram
 ```Bash
-┌─────────────────────────────────────────────────────────────────────────-──────────────────────────┐
-│ base.html                                                                                          │
-├────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ <head>                                                                                             │
-│  • Metadata (charset, viewport)                                                                    │
-│  • Title block: {% block title %}MovieWeb App{% endblock %}                                        │
-│  • <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                    │
-│                                                                                                    │
-│ <body>                                                                                             │
-│  ┌────────────────────────────────────────────────────────────────────────────────────────────┐    │
-│  │ <header>                                                                                   │    │
-│  │  • Left reel: 🎞️ div.reel-left                                                             │    │
-│  │  • Header center: h1 + nav                                                                 │    │
-│  │      ┌──────────────────────────────────────────────────────────────────────────────────┐  │    │
-│  │      │ h1: Title "MovieWeb App" + rainbow emojis 🌈                                     │  │    │
-│  │      │ <nav class="nav-bar">                                                            │  │    │
-│  │      │   • <ul>                                                                         │  │    │
-│  │      │       <li><a href="{{ url_for('home') }}">Home</a></li>                          │  │    │
-│  │      │       <li><a href="{{ url_for('contact') }}">Contact</a></li>                    │  │    │
-│  │      │       <li><a href="{{ url_for('about') }}">About</a></li>                        │  │    │
-│  │      │   </ul>                                                                          │  │    │
-│  │      └──────────────────────────────────────────────────────────────────────────────────┘  │    │
-│  │  • Right reel: 🎞️ div.reel-right                                                           │    │
-│  └────────────────────────────────────────────────────────────────────────────────────────────┘    │
-│                                                                                                    │
-│  ┌────────────────────────────────────────────────────────────────────────────────────────────┐    │
-│  │ <div class="wrapper">                                                                      │    │
-│  │                                                                                            │    │
-│  │  ┌──────────────────────────────────────────────────────────────────────────────────────┐  │    │
-│  │  │ Left Sidebar (users)                                                                 │  │    │
-│  │  │ {% if request.endpoint != 'home' %}                                                  │  │    │
-│  │  │   • <h3>🎬 Users</h3>                                                                │  │    │
-│  │  │   • <ul>                                                                             │  │    │
-│  │  │       {% for user in users %}                                                        │  │    │
-│  │  │         <li class="{% if current_user.id == user.id %}active{% endif %}">            │  │    │
-│  │  │           <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>│  │    │
-│  │  │         </li>                                                                        │  │    │
-│  │  │       {% endfor %}                                                                   │  │    │
-│  │  │   </ul>                                                                              │  │    │
-│  │  │ {% else %}                                                                           │  │    │
-│  │  │   <div class="empty-sidebar"></div>                                                  │  │    │
-│  │  │ {% endif %}                                                                          │  │    │
-│  │  └──────────────────────────────────────────────────────────────────────────────────────┘  │    │
-│  │                                                                                            │    │
-│  │  ┌─────────────────────────────────────────────────────────────────────────┐               │    │
-│  │  │ Main Content                                                            │               │    │
-│  │  │ {% if request.endpoint != 'home' %}                                     │               │    │
-│  │  │   • Back to Home Button: <a href="{{ url_for('home') }}">🏠 ← Back</a>  │               │    │
-│  │  │ {% endif %}                                                             │               │    │
-│  │  │ {% block content %}{% endblock %}                                       │               │    │
-│  │  └─────────────────────────────────────────────────────────────────────────┘               │    │
-│  │                                                                                            │    │
-│  │  ┌────────────────────────────────────────────────────────────────────────┐                │    │
-│  │  │ Right Sidebar (empty)                                                  │                │    │
-│  │  │ <div class="empty-sidebar"></div>                                      │                │    │
-│  │  └────────────────────────────────────────────────────────────────────────┘                │    │
-│  └────────────────────────────────────────────────────────────────────────────────────────────┘    │
-│                                                                                                    │
-│  ┌────────────────────────────────────────────────────────────────────┐                            │
-│  │ Flash Messages                                                     │                            │
-│  │ {% with messages = get_flashed_messages(with_categories=true) %}   │                            │
-│  │   {% if messages %}                                                │                            │
-│  │     • <div class="flash-messages">                                 │                            │
-│  │     • {% for category, msg in messages %}                          │                            │
-│  │         <div class="flash {{ category }}">{{ msg }}</div>          │                            │
-│  │       {% endfor %}                                                 │                            │
-│  │     </div>                                                         │                            │
-│  │   {% endif %}                                                      │                            │
-│  │ {% endwith %}                                                      │                            │
-│  └────────────────────────────────────────────────────────────────────┘                            │
-│                                                                                                    │
-│  <footer> &copy; {{ current_year }} MovieWeb App </footer>                                         │
-│                                                                                                    │
-│  <script src="{{ url_for('static', filename='scripts.js') }}"></script>                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ base.html — Main Layout Template                                                                                                                               │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ <head>                                                                                                                                                         │
+│  • Metadata (charset, viewport)                                                                                                                                │
+│  • Title block: {% block title %}MovieWeb App{% endblock %}                                                                                                    │
+│  • <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                                                                                │
+│                                                                                                                                                                │
+│ <body>                                                                                                                                                         │
+│  ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  │   
+│  │ <header>                                                                                                                                                 │  │
+│  │  • Left reel: 🎞️ div.reel-left                                                                                                                           │  │
+│  │  • Header center: h1 + nav                                                                                                                               │  │
+│  │      ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  │  │
+│  │      │ h1: Title "MovieWeb App" + rainbow emojis 🌈                                                                                                   │  │  │
+│  │      │ <nav class="nav-bar">                                                                                                                          │  │  │
+│  │      │   • <ul>                                                                                                                                       │  │  │
+│  │      │       <li class="{{ 'active' if request.path == url_for('home') else '' }}"><a href="{{ url_for('home') }}">Home</a></li>                      │  │  │
+│  │      │       <li class="{{ 'active' if request.path == url_for('about') else '' }}"><a href="{{ url_for('about') }}">About</a></li>                   │  │  │
+│  │      │       <li class="{{ 'active' if request.path == url_for('contact') else '' }}"><a href="{{ url_for('contact') }}">Contact</a></li>             │  │  │
+│  │      │       <li class="{{ 'active' if request.path == url_for('ai_suggest') else '' }}"><a href="{{ url_for('ai_suggest') }}">AI Suggestions</a></li>│  │  │
+│  │      │   </ul>                                                                                                                                        │  │  │
+│  │      └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  │  │
+│  │  • Right reel: 🎞️ div.reel-right                                                                                                                         │  │
+│  └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                                                                                                │
+│  ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  │
+│  │ <div class="wrapper">                                                                                                                                    │  │
+│  │                                                                                                                                                          │  │
+│  │  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ │  │
+│  │  │ Left Sidebar (users)                                                                                                                                │ │  │
+│  │  │ {% if request.endpoint != 'home' %}                                                                                                                 │ │  │
+│  │  │   • <h3>🎬 Users</h3>                                                                                                                               │ │  │
+│  │  │   • <ul>                                                                                                                                            │ │  │
+│  │  │       {% set current_user = current_user or None %}                                                                                                 │ │  │
+│  │  │       {% for user in users %}                                                                                                                       │ │  │
+│  │  │         <li class="{% if current_user and user.id == current_user.id %}active{% endif %}">                                                          │ │  │
+│  │  │           <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>                                                               │ │  │
+│  │  │         </li>                                                                                                                                       │ │  │
+│  │  │       {% endfor %}                                                                                                                                  │ │  │
+│  │  │   </ul>                                                                                                                                             │ │  │
+│  │  │ {% else %}                                                                                                                                          │ │  │
+│  │  │   <div class="empty-sidebar"></div>                                                                                                                 │ │  │
+│  │  │ {% endif %}                                                                                                                                         │ │  │
+│  │  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ │  │
+│  │                                                                                                                                                          │  │
+│  │  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ │  │
+│  │  │ Main Content                                                                                                                                        │ │  │
+│  │  │ {% if request.endpoint != 'home' %}                                                                                                                 │ │  │
+│  │  │   • Back to Home Button: <a href="{{ url_for('home') }}">🏠 ← Back</a>                                                                              │ │  │
+│  │  │ {% endif %}                                                                                                                                         │ │  │
+│  │  │ {% block content %}{% endblock %}                                                                                                                   │ │  │
+│  │  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ │  │
+│  │                                                                                                                                                          │  │
+│  │  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ │  │
+│  │  │ Right Sidebar (empty)                                                                                                                               │ │  │
+│  │  │ <div class="empty-sidebar"></div>                                                                                                                   │ │  │
+│  │  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ │  │
+│  └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                                                                                                │
+│  ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  │
+│  │ Flash Messages                                                                                                                                           │  │
+│  │ {% with messages = get_flashed_messages(with_categories=true) %}                                                                                         │  │
+│  │   {% if messages %}                                                                                                                                      │  │
+│  │     • <div class="flash-messages">                                                                                                                       │  │
+│  │     • {% for category, msg in messages %}                                                                                                                │  │
+│  │         <div class="flash {{ category }}">{{ msg }}</div>                                                                                                │  │
+│  │       {% endfor %}                                                                                                                                       │  │
+│  │     </div>                                                                                                                                               │  │
+│  │   {% endif %}                                                                                                                                            │  │
+│  │ {% endwith %}                                                                                                                                            │  │
+│  └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                                                                                                │
+│  <footer> &copy; {{ current_year }} MovieWeb App </footer>                                                                                                     │
+│                                                                                                                                                                │
+│  <script src="{{ url_for('static', filename='scripts.js') }}"></script>                                                                                        │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
 
 ```
 
@@ -638,6 +743,76 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 
 
 ```
+
+## 🧩ai_suggestions.html
+```Bash
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ ai_suggest.html — AI Movie Suggestions Page                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│ {% extends "base.html" %}                                                       │
+│ {% block title %}AI Movie Suggestions{% endblock %}                             │
+│                                                                                 │
+│ {% block content %}                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────────┐  │
+│  │ <div class="container mt-4 ai-search-area">                               │  │
+│  │                                                                           │  │
+│  │  • Page Title: 🎬 AI Movie Suggestions                                    │  │
+│  │                                                                           │  │
+│  │  ┌─────────────────────────────────────────────────────────────────────┐  │  │
+│  │  │ Search Form (POST /ai_suggest)                                      │  │  │
+│  │  │ id="ai-search-form"                                                 │  │  │
+│  │  │   • Input: text field (movie_query)                                 │  │  │
+│  │  │   • Submit Button: Get Suggestions                                  │  │  │
+│  │  │   • Loading Spinner (id="loading-indicator")                        │  │  │
+│  │  │   • Example Queries (ul.list-unstyled.flex-wrap)                    │  │  │
+│  │  └─────────────────────────────────────────────────────────────────────┘  │  │
+│  │                                                                           │  │
+│  │  {% if query %}                                                           │  │
+│  │    • Display search term: Results for "<query>"                           │  │
+│  │  {% endif %}                                                              │  │
+│  │                                                                           │  │
+│  │  {% if model_name %}                                                      │  │
+│  │    • Model used: <strong>{{ model_name }}</strong>                        │  │
+│  │  {% endif %}                                                              │  │
+│  │                                                                           │  │
+│  │  {% if suggestions %}                                                     │  │
+│  │   ┌─────────────────────────────────────────────────────────────────────┐ │  │
+│  │   │ Add to User Selector (dropdown)                                     │ │  │
+│  │   │ id="target_user", pre-select current_user                           │ │  │
+│  │   └─────────────────────────────────────────────────────────────────────┘ │  │
+│  │                                                                           │  │
+│  │   <ul class="list-group shadow-sm">                                       │  │
+│  │   {% for movie in suggestions %}                                          │  │
+│  │    ┌───────────────────────────────────────────────────────────────────┐  │  │
+│  │    │ <li class="list-group-item">                                      │  │  │
+│  │    │   • Content wrapper (flex)                                        │  │  │
+│  │    │       • Poster image (if movie.poster_url)                        │  │  │
+│  │    │       • Title, Year, Director, Star Rating                        │  │  │
+│  │    │   • Form to add movie to list (POST /add_ai_movie)                │  │  │
+│  │    │       • Hidden fields: user_id, movie_name, director, year, rating│  │  │
+│  │    │       • Hidden: poster_url                                        │  │  │
+│  │    │       • Submit button: Add to List                                │  │  │
+│  │    └───────────────────────────────────────────────────────────────────┘  │  │
+│  │   {% endfor %}                                                            │  │
+│  │   </ul>                                                                   │  │
+│  │  {% elif query %}                                                         │  │
+│  │   • Alert: ❌ No AI suggestions found.                                    │  │
+│  │  {% endif %}                                                              │  │
+│  │                                                                           │  │
+│  │  <hr class="my-4">                                                        │  │
+│  │  • Footer note: Powered by Google Gemini                                  │  │
+│  │  <div class="mb-5"></div>                                                 │  │
+│  │                                                                           │  │
+│  └───────────────────────────────────────────────────────────────────────────┘  │
+│ {% endblock %}                                                                  │
+│                                                                                 │
+│ {% block scripts %}                                                             │
+│  <script src="{{ url_for('static', filename='scripts.js') }}"></script>         │
+│ {% endblock %}                                                                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+```
+
 ## 🧩 scripts.js — Project Structure Diagram
 
 ```Bash
@@ -702,7 +877,40 @@ All dynamic operations (DB CRUD, OMDb API) are delegated to DataManager and SQLA
 │  └─────────────────────────────────────────────────────────────────────────────┘    │
 │  → Toggles "Update Movie" forms per movie card, with cancel button                  │
 │                                                                                     │
+│  // -----------------------------                                                   │
+│  // AI Movie Suggestions Handling                                                   │
+│  // -----------------------------                                                   │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │ const userSelect = document.getElementById('target_user')                   │    │
+│  │ const userIdInputs = document.querySelectorAll('.user-id-input')            │    │
+│  │ const searchForm = document.getElementById('ai-search-form')                │    │
+│  │ const searchButton = document.getElementById('search-button')               │    │
+│  │ const loadingIndicator = document.getElementById('loading-indicator')       │    │
+│  │                                                                             │    │
+│  │ function updateForms() {                                                    │    │
+│  │     const selectedUserId = userSelect ? userSelect.value : null             │    │
+│  │     if (selectedUserId) {                                                   │    │
+│  │         userIdInputs.forEach(input => { input.value = selectedUserId })     │    │
+│  │     }                                                                       │    │
+│  │ }                                                                           │    │
+│  │                                                                             │    │
+│  │ if (userSelect) {                                                           │    │
+│  │     updateForms()                                                           │    │
+│  │     userSelect.addEventListener('change', updateForms)                      │    │
+│  │ }                                                                           │    │
+│  │                                                                             │    │
+│  │ if (searchForm && searchButton && loadingIndicator) {                       │    │
+│  │     searchForm.addEventListener('submit', () => {                           │    │
+│  │         searchButton.disabled = true                                        │    │
+│  │         searchButton.innerHTML = '<i class="bi bi-search"></i> Searching...'│    │
+│  │         loadingIndicator.style.display = 'block'                            │    │
+│  │     })                                                                      │    │
+│  │ }                                                                           │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│  → Handles AI search form submit: updates hidden user_id inputs, shows spinner      │
+│                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
+
 
 ```
 ## 🎨 style.css — Detailed ANSI Block Diagram
