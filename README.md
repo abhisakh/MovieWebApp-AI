@@ -1,6 +1,5 @@
 # 🎬 MovieWebApp
-<img width="754" height="866" alt="Screenshot 2025-10-29 at 10 26 50" src="https://github.com/user-attachments/assets/717f4551-81ed-4b7c-bb72-3c70a808358a" />
-src="https://github.com/user-attachments/assets/51ad6d76-9e4c-46d7-baf7-01db53e8cd7b" />
+<img width="1054" height="1156" alt="Screenshot 2025-10-29 at 10 26 50" src="https://github.com/user-attachments/assets/717f4551-81ed-4b7c-bb72-3c70a808358a" />
 
 <img width="1704" height="1069" alt="Screenshot 2025-10-29 at 00 50 25" src="https://github.com/user-attachments/assets/0ae4f3ff-7450-4eb1-9b49-4f8385e5812b" />
 
