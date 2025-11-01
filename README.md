@@ -9,7 +9,10 @@ Users can add, update, and delete movies, fetch details from the OMDb API, and t
 
 ---
 ## Online Deployed: (click hier) ==> [Website link](https://abhisakh.pythonanywhere.com/) 
+---
+
 (https://abhisakh.pythonanywhere.com/)
+
 ---
 
 ## 🧠 Learn & Practice with MovieWebApp
